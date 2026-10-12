@@ -46,8 +46,15 @@ First-time test setup: `npx playwright install chromium firefox webkit`.
 
 ## Deploying
 
-`npm run build` writes a self-contained static site to `out/`. Upload that folder to any static host and point
-`links.abhinesh.codes` at it.
+Deployed as a Cloudflare Workers static-assets site (no Worker script, no OpenNext). In Workers Builds:
+
+- **Build command:** `npm run build`. This exports to `out/` and writes `out/_headers` with security headers, a hash-based
+  Content Security Policy and caching rules.
+- **Deploy command:** `npx wrangler deploy`. It reads `wrangler.jsonc` and uploads `out/` as static assets.
+
+Because `wrangler.jsonc` exists, `wrangler deploy` skips its automatic framework setup. Without it, that setup
+assumed a server-rendered Next.js app and failed. `out/` also works on any other static host; `_headers` is
+Cloudflare/Netlify syntax.
 
 ## Stack
 

@@ -10,6 +10,7 @@
     "dev": "next dev",
     "prebuild": "node scripts/gen-qr.mjs && node scripts/copy-pdfjs.mjs",
     "build": "next build",
+    "postbuild": "node scripts/gen-headers.mjs",
     "preview": "node scripts/serve-out.mjs",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",

@@ -1,0 +1,16 @@
+// Cloudflare Workers deploy config: an assets-only Worker serving the static export in out/.
+// This site is `output: "export"` (no server), so no Worker script and no OpenNext adapter. Having this file also
+// stops `wrangler deploy` from running its automatic framework setup, which assumed a server-rendered Next.js app.
+// Docs: https://developers.cloudflare.com/workers/static-assets/
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "links-hub",
+  "compatibility_date": "2026-10-06",
+  "assets": {
+    "directory": "./out",
+    // /resume -> /resume/ (matches next.config trailingSlash: true)
+    "html_handling": "auto-trailing-slash",
+    // Unknown paths get out/404.html with a real 404 status.
+    "not_found_handling": "404-page"
+  }
+}
