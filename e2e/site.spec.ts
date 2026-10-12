@@ -139,6 +139,7 @@ test("reduced motion: nothing animates and the pause button is hidden", async ({
     [".aurora span", ".content .rise", ".mark .sheen", ".dot"].map((s) => getComputedStyle(document.querySelector(s)!).animationName),
   );
   expect(names).toEqual(["none", "none", "none", "none"]);
+  await expect(page.locator(".mark g[data-draw]")).toHaveAttribute("data-draw", "skip-motion"); // no draw-in either
   await expect(page.getByRole("button", { name: "Pause background animation" })).toBeHidden();
   await expect(resume(page)).toBeVisible();
 });
@@ -167,6 +168,54 @@ test("hero content is fully visible immediately, without waiting for any animati
     const s = await page.locator(sel).evaluate((el) => ({ op: getComputedStyle(el).opacity, anim: getComputedStyle(el).animationName }));
     expect(s, sel).toEqual({ op: "1", anim: "none" });
   }
+});
+
+// Records whether the monogram's draw-in class was ever added, from the first moment of each load.
+async function watchDraw(page: Page, stallClock = false) {
+  await page.addInitScript((stall) => {
+    const w = window as unknown as { __drew: boolean };
+    w.__drew = false;
+    // Cold-start stall. On the prototype: after a reload WebKit swaps in a new document.timeline object after init
+    // scripts run, so an override on the instance was silently lost there.
+    if (stall) Object.defineProperty(DocumentTimeline.prototype, "currentTime", { get: () => 0, configurable: true });
+    new MutationObserver((records) => {
+      if (records.some((r) => (r.target as Element).classList?.contains("drawing"))) w.__drew = true;
+    }).observe(document, { subtree: true, attributes: true, attributeFilter: ["class"] });
+  }, stallClock);
+}
+const drew = (page: Page) => page.evaluate(() => (window as unknown as { __drew: boolean }).__drew);
+// Wait on the component's recorded decision, never on time or frame counts: headless Chromium can go 800 ms+
+// without a frame, and WebKit can run several frames before hydration, so timed waits passed vacuously.
+const strokeGroup = (page: Page) => page.locator(".mark g[data-draw]");
+const strokesAtRest = (page: Page) =>
+  page.locator(".mark path").evaluateAll((ps) => ps.map((p) => getComputedStyle(p).strokeDasharray));
+
+test("monogram strokes draw in, then rest fully drawn with no animation attached", async ({ page }) => {
+  await watchDraw(page);
+  await openIn(page, { reducedMotion: "no-preference" });
+  await expect(strokeGroup(page)).toHaveAttribute("data-draw", "done", { timeout: 8_000 });
+  expect(await drew(page)).toBe(true);
+  await expect(page.locator(".mark .drawing")).toHaveCount(0);
+  expect(await strokesAtRest(page)).toEqual(["none", "none", "none"]);
+});
+
+test("monogram stays fully drawn when the animation clock is stalled (cold start)", async ({ page }) => {
+  await watchDraw(page, true);
+  await openIn(page, { reducedMotion: "no-preference" });
+  await expect(strokeGroup(page)).toHaveAttribute("data-draw", "skip-clock", { timeout: 8_000 });
+  expect(await drew(page)).toBe(false);
+  expect(await strokesAtRest(page)).toEqual(["none", "none", "none"]);
+});
+
+test("monogram does not draw in when the visitor paused animation", async ({ page }) => {
+  await watchDraw(page);
+  await openIn(page, { reducedMotion: "no-preference" });
+  await page.getByRole("button", { name: "Pause background animation" }).click();
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-motion", "paused");
+  await expect(strokeGroup(page)).toHaveAttribute("data-draw", "skip-paused", { timeout: 8_000 });
+  expect(await drew(page)).toBe(false);
+  expect(await strokesAtRest(page)).toEqual(["none", "none", "none"]);
 });
 
 test("desktop: identity and content sit side by side, resume above the fold", async ({ page }) => {

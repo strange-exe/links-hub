@@ -184,9 +184,15 @@ a { color: inherit; }
 .mark .mark-bg { fill: var(--glass); stroke: color-mix(in srgb, var(--text) 14%, transparent); }
 .mark .sheen { opacity: 0; }
 @media (prefers-reduced-motion: no-preference) {
-  /* No stroke draw-in: it starts from hidden strokes, so a stalled animation clock showed an empty tile.
-     The mark is drawn from the first frame; a light sheen crosses it shortly after load and on hover. */
-  .mark .sheen { animation: sheen 1.2s var(--ease) 0.4s both; }
+  /* Stroke draw-in: Monogram.tsx adds .drawing only once the animation clock is running, and removes it when
+     the G finishes, so the strokes rest fully drawn without any animation. The sheen follows the draw. */
+  /* Dash 1, gap 2, offset 1.01: no zero-length dash touches either end, so round caps can't paint a stray dot
+     before a stroke starts. Order: A legs, then the G, then the A crossbar; the G finishes last. */
+  .mark .drawing path { stroke-dasharray: 1 2; animation: draw 1s cubic-bezier(0.65, 0, 0.35, 1) 0.1s both; }
+  .mark .drawing path:nth-child(2) { animation-duration: 0.45s; animation-delay: 0.75s; }
+  .mark .drawing path:nth-child(3) { animation-duration: 1.1s; animation-delay: 0.4s; }
+  @keyframes draw { from { stroke-dashoffset: 1.01; } to { stroke-dashoffset: 0; } }
+  .mark .sheen { animation: sheen 1.2s var(--ease) 1.5s both; }
   .mark:hover .sheen { animation: sheen 1.1s var(--ease) both; }
   @keyframes sheen { 0% { opacity: 0.0; transform: translateX(-120px); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateX(120px); } }
 }
