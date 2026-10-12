@@ -78,8 +78,16 @@ accent/bg, accent/surface, status/surface and muted/raised.
 
 ## Motion
 
-- One entrance sequence: blocks rise and un-blur in a 70 ms stagger, and the monogram strokes draw in.
-- The aurora drifts over 26-38 s using transform only. The spotlight follows the pointer on fine pointers only.
+- **The identity column never animates in:** the name, status and resume button are visible on the first frame.
+  The right column rises from 35% opacity over 0.6 s (50 ms stagger), with no blur. Why: on a cold browser start
+  the animation clock stalled for 1-3 s, and opacity-0 entrances left the page blank. The monogram has no stroke
+  draw-in for the same reason; a sheen crosses it after load and on hover.
+- **Aurora:** one violet field drifts (transform only, about 26 s); the indigo field and the yellow glint are static.
+  The grain uses no blend mode.
+- **Resume button glint:** a rotating conic layer clipped to the pill (a transform animation, so it runs on the compositor).
+- **Spotlight:** a fixed-size glow moved with transform, updated once per animation frame, on fine pointers only.
+- **Measured** with Chromium at 4× CPU throttle, idle animation plus pointer movement: 11 fps before the
+  2026-10-12 optimisation pass, about 45 fps after; about 58 fps with all decoration off.
 - Hover: link rows slide 4 px, and arrows nudge up and to the right. Easing is `cubic-bezier(.32,.72,0,1)`.
 - **Pause control** (WCAG 2.2.2) stops the aurora; the choice is saved. `prefers-reduced-motion` stops everything.
 
@@ -94,7 +102,11 @@ accent/bg, accent/surface, status/surface and muted/raised.
   but not redistributing their source, so these are reimplementations, not copies):
   - **Moving Border:** on the resume button only. CSS `@property --orbit` drives a conic gradient on a 2 px ring
     (lilac in dark mode, sun yellow in light mode). It pauses with the Pause button and is off under reduced motion.
-  - **Encrypted Text:** `components/ScrambleText.tsx` (no dependencies) decodes the availability status and the viewer
-    title on load. Screen readers get the real text at once.
+  - **Encrypted Text:** `components/ScrambleText.tsx` (no dependencies) decodes the viewer title on load. Screen
+    readers get the real text at once. It was removed from the availability status when the status moved to the
+    body font (proportional glyphs made the chip change width as it decoded).
+- 2026-10-12: Availability status restyled as a **gradient chip**: a glass pill with the cards' violet-to-yellow
+  hairline, the body font at 500, and a yellow dot with a halo and ping. The user chose it from three previews
+  (live line, gradient chip, split badge) after rejecting the yellow-tinted pill and the neutral mono pill.
   - Brand board built per the brandkit skill as HTML and rendered to PNG (no image generator in this environment):
     `.claude/design/brandkit.html`/`.png`.

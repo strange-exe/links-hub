@@ -136,7 +136,7 @@ test("favicon and apple-touch-icon exist and match their declared format", async
 test("reduced motion: nothing animates and the pause button is hidden", async ({ page }) => {
   await openIn(page, { reducedMotion: "reduce" });
   const names = await page.evaluate(() =>
-    [".aurora span", ".name", ".mark .draw", ".link"].map((s) => getComputedStyle(document.querySelector(s)!).animationName),
+    [".aurora span", ".content .rise", ".mark .sheen", ".dot"].map((s) => getComputedStyle(document.querySelector(s)!).animationName),
   );
   expect(names).toEqual(["none", "none", "none", "none"]);
   await expect(page.getByRole("button", { name: "Pause background animation" })).toBeHidden();
@@ -157,6 +157,16 @@ test("pause button stops the aurora and the choice persists", async ({ page }) =
   await expect(page.getByRole("button", { name: "Pause background animation" })).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "Pause background animation" }).click();
   await expect(page.locator("html")).not.toHaveAttribute("data-motion", /.*/);
+});
+
+test("hero content is fully visible immediately, without waiting for any animation", async ({ page }) => {
+  // Regression: a cold browser start stalled the animation clock 1-3 s, and opacity-0 entrances left the page
+  // blank. The identity column must not animate in at all.
+  await openIn(page, { reducedMotion: "no-preference" });
+  for (const sel of [".name", ".role", ".status", ".cta"]) {
+    const s = await page.locator(sel).evaluate((el) => ({ op: getComputedStyle(el).opacity, anim: getComputedStyle(el).animationName }));
+    expect(s, sel).toEqual({ op: "1", anim: "none" });
+  }
 });
 
 test("desktop: identity and content sit side by side, resume above the fold", async ({ page }) => {
@@ -269,12 +279,13 @@ test("moving border on the resume button runs, pauses, and stops for reduced mot
   expect(await ring("animationName")).toBe("none");
 });
 
-test("status text decodes to the real wording; screen readers get it immediately", async ({ page }) => {
+test("status chip: real text immediately, gradient hairline, dot hidden from assistive tech", async ({ page }) => {
   await openIn(page, { reducedMotion: "no-preference" });
   const status = page.locator(".status");
-  await expect(status.locator(".sr-only")).toHaveText("Open to SWE or ML internships");
-  await expect(status.locator(".scramble")).toHaveAttribute("aria-hidden", "true");
-  await expect(status.locator(".scramble")).toHaveText("Open to SWE or ML internships", { timeout: 3000 });
+  await expect(status).toHaveText("Open to SWE or ML internships");
+  await expect(status.locator(".dot")).toHaveAttribute("aria-hidden", "true");
+  const hairline = await status.evaluate((el) => getComputedStyle(el, "::after").backgroundImage);
+  expect(hairline).toContain("linear-gradient");
 });
 
 test("spotlight follows the pointer over a link", async ({ page }) => {

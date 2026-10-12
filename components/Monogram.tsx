@@ -1,7 +1,6 @@
-import type { CSSProperties } from "react";
-
 // AG monogram: flat-topped A beside a geometric G, metallic gradient stroke on a glass tile.
-// Strokes draw in on load and a light sheen crosses on hover (CSS in globals.css, off under reduced motion).
+// Visible from the first frame; a light sheen crosses it after load and on hover (CSS in globals.css,
+// off under reduced motion).
 export default function Monogram() {
   return (
     <svg className="mark" viewBox="0 0 120 100" role="img" aria-label="AG monogram">
@@ -23,8 +22,8 @@ export default function Monogram() {
       </defs>
       <rect className="mark-bg" x="1" y="1" width="118" height="98" rx="30" />
       <g fill="none" stroke="url(#ag-stroke)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round">
-        <path className="draw" style={{ "--len": 140 } as CSSProperties} d="M14 78 L30 24 H38 L54 78 M21 60 H47" />
-        <path className="draw" style={{ "--len": 160 } as CSSProperties} d="M99.2 35.9 A25 25 0 1 0 105 52 H87" />
+        <path d="M14 78 L30 24 H38 L54 78 M21 60 H47" />
+        <path d="M99.2 35.9 A25 25 0 1 0 105 52 H87" />
       </g>
       {/* Skew lives on a wrapper so the CSS sweep transform on the rect doesn't replace it. */}
       <g clipPath="url(#ag-clip)">

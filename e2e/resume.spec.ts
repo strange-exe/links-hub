@@ -25,20 +25,23 @@ function collectErrors(page: Page) {
 }
 
 const viewer = (page: Page) => page.locator(".viewer");
+// Waits on the viewer's own ready state. 15 s: under full 3-engine parallel load, Firefox took up to ~13 s to
+// compile the 1.3 MB pdf.js worker (alone it is ready in about 1 s), so the default 5 s produced false failures.
+const expectReady = (page: Page) => expect(viewer(page)).toHaveAttribute("data-state", "ready", { timeout: 15_000 });
 
 test("View resume opens the in-site viewer", async ({ page }) => {
   await serveFixture(page);
   await page.goto("/");
   await page.getByRole("link", { name: "View resume" }).click();
   await expect(page).toHaveURL(/\/resume\/$/);
-  await expect(viewer(page)).toHaveAttribute("data-state", "ready");
+  await expectReady(page);
 });
 
 test("renders every page, counts pages, exposes the text to assistive tech, no errors", async ({ page }) => {
   const errors = collectErrors(page);
   await serveFixture(page);
   await page.goto("/resume/");
-  await expect(viewer(page)).toHaveAttribute("data-state", "ready");
+  await expectReady(page);
   const canvases = page.locator("canvas.pdf-canvas");
   await expect(canvases).toHaveCount(2);
   await expect(canvases.nth(0)).toHaveAttribute("data-rendered", "true");
@@ -80,7 +83,7 @@ test("zoom buttons and keys change the page size and readout", async ({ page }) 
 test("Download saves the PDF with a proper file name", async ({ page }) => {
   await serveFixture(page);
   await page.goto("/resume/");
-  await expect(viewer(page)).toHaveAttribute("data-state", "ready");
+  await expectReady(page);
   const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download resume" }).click()]);
   expect(download.suggestedFilename()).toBe("Abhinesh-Gangwar-Resume.pdf");
   const saved = readFileSync((await download.path())!);
@@ -103,7 +106,7 @@ test("load failure shows an error with a direct link, and Try again recovers", a
   await expect(page.getByRole("button", { name: "Download resume" })).toBeDisabled();
   fail = false;
   await alert.getByRole("button", { name: "Try again" }).click();
-  await expect(viewer(page)).toHaveAttribute("data-state", "ready");
+  await expectReady(page);
 });
 
 test("back link returns to the links page", async ({ page }) => {
@@ -120,7 +123,7 @@ for (const scheme of ["light", "dark"] as const) {
     await page.emulateMedia({ colorScheme: scheme, reducedMotion: "reduce" });
     await page.reload();
     expect(await page.evaluate(() => matchMedia("(prefers-color-scheme: dark)").matches)).toBe(scheme === "dark");
-    await expect(viewer(page)).toHaveAttribute("data-state", "ready");
+    await expectReady(page);
     const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
     expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
     if (info.project.name === "chromium") {
@@ -133,7 +136,7 @@ test("phone: toolbar fits, every control keeps a name", async ({ page }, info) =
   await page.setViewportSize({ width: 390, height: 844 });
   await serveFixture(page);
   await page.goto("/resume/");
-  await expect(viewer(page)).toHaveAttribute("data-state", "ready");
+  await expectReady(page);
   // Regression: the page once rendered 0 px wide on phones (fit width never measured).
   const canvas = page.locator("canvas.pdf-canvas").first();
   await expect(canvas).toHaveAttribute("data-rendered", "true");

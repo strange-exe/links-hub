@@ -12,7 +12,6 @@ import type { CSSProperties } from "react";
 import Aurora from "@/components/Aurora";
 import FooterTools from "@/components/FooterTools";
 import Monogram from "@/components/Monogram";
-import ScrambleText from "@/components/ScrambleText";
 import Spotlight from "@/components/Spotlight";
 import { featured, groups, profile, type IconName } from "@/lib/profile";
 
@@ -50,7 +49,7 @@ export default function Page() {
           </p>
           <p className="status rise" style={{ "--i": 3 } as CSSProperties}>
             <span className="dot" aria-hidden="true" />
-            <ScrambleText text={profile.status} durationMs={900} />
+            {profile.status}
           </p>
           <div className="ctas rise" style={{ "--i": 4 } as CSSProperties}>
             {/* Opens the in-site viewer (app/resume). A plain <a>, not next/link: the static export's
