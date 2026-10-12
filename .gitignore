@@ -1,0 +1,13 @@
+.claude/
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+test-results/
+playwright-report/
+e2e/shots/
+.env*
+!.env.example
+public/pdfjs/
+public/qr.svg
