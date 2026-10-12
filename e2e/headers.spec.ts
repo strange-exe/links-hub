@@ -21,7 +21,9 @@ test("security headers are served on every page", async ({ request }) => {
     const h = res.headers();
     expect(h["content-security-policy"], url).toContain("default-src 'self'");
     expect(h["content-security-policy"], url).not.toContain("unsafe-eval");
-    expect(h["content-security-policy"], url).toMatch(/script-src 'self'( 'sha256-[A-Za-z0-9+/=]+')+;/);
+    expect(h["content-security-policy"], url).toMatch(/script-src 'self'[^;]*( 'sha256-[A-Za-z0-9+/=]+')+;/);
+    // Cloudflare injects its analytics beacon at the edge as /beacon.min.js/<version>: the prefix must be allowed.
+    expect(h["content-security-policy"], url).toContain("https://static.cloudflareinsights.com/beacon.min.js/ ");
     expect(h["x-content-type-options"], url).toBe("nosniff");
     expect(h["referrer-policy"], url).toBe("strict-origin-when-cross-origin");
   }

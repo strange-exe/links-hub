@@ -10,6 +10,11 @@ import path from "node:path";
 
 const OUT = path.resolve("out");
 const RESUME_ORIGIN = "https://abhinesh.codes"; // the viewer fetches resume.pdf from the portfolio (CORS *)
+// Cloudflare Web Analytics injects its beacon into every page at the edge (it never appears in out/). The live URL is
+// /beacon.min.js/<version>, so the exact file and the "beacon.min.js/" path prefix are both allowed; the beacon
+// reports to /cdn-cgi/rum on this origin, which connect-src 'self' already covers.
+// Docs: https://developers.cloudflare.com/web-analytics/faq/
+const CF_BEACON = "https://static.cloudflareinsights.com/beacon.min.js https://static.cloudflareinsights.com/beacon.min.js/";
 
 async function htmlFiles(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -32,7 +37,7 @@ for (const file of await htmlFiles(OUT)) {
 
 const csp = [
   "default-src 'self'",
-  `script-src 'self' ${[...hashes].sort().join(" ")}`,
+  `script-src 'self' ${CF_BEACON} ${[...hashes].sort().join(" ")}`,
   "style-src 'self' 'unsafe-inline'", // React style attributes (stagger index, viewer sizes); no script access
   "img-src 'self' data: blob:",
   "font-src 'self'",
