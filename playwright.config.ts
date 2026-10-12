@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const PORT = 4173;
+const PORT = Number(process.env.E2E_PORT ?? 4173); // override when 4173 is taken (e.g. by `npm run preview`)
 
 export default defineConfig({
   testDir: "e2e",

@@ -32,7 +32,8 @@ All text and links live in [`lib/profile.ts`](lib/profile.ts). Design tokens and
 | `npm run check` | All of the above, in CI order |
 | `npm run images` | Regenerates `app/apple-icon.png`, `app/favicon.ico` and `app/opengraph-image.png` |
 
-First-time test setup: `npx playwright install chromium firefox webkit`.
+First-time test setup: `npx playwright install chromium firefox webkit`. If port 4173 is in use (for example by
+`npm run preview`), set `E2E_PORT` to another port. GitHub Actions runs the full `check` list on every push.
 
 ## Tests
 
@@ -48,8 +49,9 @@ First-time test setup: `npx playwright install chromium firefox webkit`.
 
 Deployed as a Cloudflare Workers static-assets site (no Worker script, no OpenNext). In Workers Builds:
 
-- **Build command:** `npm run build`. This exports to `out/` and writes `out/_headers` with security headers, a hash-based
-  Content Security Policy and caching rules.
+- **Build command:** `npm run build`, not `npm run check`. This exports to `out/` and writes `out/_headers` with
+  security headers, a hash-based Content Security Policy and caching rules. The Cloudflare build image has no
+  Playwright browsers, so the tests run in GitHub Actions instead (`.github/workflows/ci.yml`).
 - **Deploy command:** `npx wrangler deploy`. It reads `wrangler.jsonc` and uploads `out/` as static assets.
 
 Because `wrangler.jsonc` exists, `wrangler deploy` skips its automatic framework setup. Without it, that setup
