@@ -32,8 +32,8 @@ All text and links live in [`lib/profile.ts`](lib/profile.ts). Design tokens and
 | `npm run check` | All of the above, in CI order |
 | `npm run images` | Regenerates `app/apple-icon.png`, `app/favicon.ico` and `app/opengraph-image.png` |
 
-First-time test setup: `npx playwright install chromium firefox webkit`. If port 4173 is in use (for example by
-`npm run preview`), set `E2E_PORT` to another port. GitHub Actions runs the full `check` list on every push.
+First-time test setup: `npx playwright install chromium firefox webkit`. The suite serves `out/` on port 4174, so
+it runs alongside `npm run preview` (4173); set `E2E_PORT` if 4174 is taken. GitHub Actions runs the full `check` list on every push.
 
 ## Tests
 

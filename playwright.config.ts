@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const PORT = Number(process.env.E2E_PORT ?? 4173); // override when 4173 is taken (e.g. by `npm run preview`)
+// Not 4173: that is `npm run preview`, and with a preview open the suite refused to start ("already used").
+const PORT = Number(process.env.E2E_PORT ?? 4174);
 
 export default defineConfig({
   testDir: "e2e",
