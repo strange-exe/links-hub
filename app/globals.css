@@ -184,17 +184,39 @@ a { color: inherit; }
 .mark .mark-bg { fill: var(--glass); stroke: color-mix(in srgb, var(--text) 14%, transparent); }
 .mark .sheen { opacity: 0; }
 @media (prefers-reduced-motion: no-preference) {
-  /* Stroke draw-in: Monogram.tsx adds .drawing only once the animation clock is running, and removes it when
-     the G finishes, so the strokes rest fully drawn without any animation. The sheen follows the draw. */
-  /* Dash 1, gap 2, offset 1.01: no zero-length dash touches either end, so round caps can't paint a stray dot
-     before a stroke starts. Order: A legs, then the G, then the A crossbar; the G finishes last. */
-  .mark .drawing path { stroke-dasharray: 1 2; animation: draw 1s cubic-bezier(0.65, 0, 0.35, 1) 0.1s both; }
-  .mark .drawing path:nth-child(2) { animation-duration: 0.45s; animation-delay: 0.75s; }
-  .mark .drawing path:nth-child(3) { animation-duration: 1.1s; animation-delay: 0.4s; }
-  @keyframes draw { from { stroke-dashoffset: 1.01; } to { stroke-dashoffset: 0; } }
-  .mark .sheen { animation: sheen 1.2s var(--ease) 1.5s both; }
+  /* Without the loop (clock stalled at start): one sheen after load, as before. */
+  .mark .sheen { animation: sheen 1.4s var(--ease) 1.4s both; }
   .mark:hover .sheen { animation: sheen 1.1s var(--ease) both; }
   @keyframes sheen { 0% { opacity: 0.0; transform: translateX(-120px); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateX(120px); } }
+
+  /* Loop, 7 s per cycle, the original draw-in repeated: both letters draw together over 1.6 s at one pen speed
+     (dash lengths in user units, so the longer G takes the same time at a similar speed), hold, sheen at the
+     original moment (1.4 s after the first draw starts), erase over 1 s from the start of each stroke, a 0.4 s
+     beat, redraw. Monogram.tsx adds .looping only once the animation clock is running. Dash = gap = --len, so no
+     zero-length dash ever touches a path end (no round-cap dots). */
+  /* --back is the erased offset, spelled out: calc(var(--len) * -1) on a unitless number is invalid for
+     stroke-dashoffset in Chromium (NaN) and Firefox (dropped), so the erase never happened there. */
+  .mark .strokes path:first-child { --len: 140; --back: -140; }
+  .mark .strokes path:last-child { --len: 160; --back: -160; }
+  .mark.looping .strokes path {
+    stroke-dasharray: var(--len);
+    animation: ag-loop 7s 0.15s infinite both;
+  }
+  @keyframes ag-loop {
+    0% { stroke-dashoffset: var(--len); animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1); }
+    22.86%, 80% { stroke-dashoffset: 0; animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1); }
+    94.29%, 100% { stroke-dashoffset: var(--back); }
+  }
+  /* No separate hover sweep while looping: restarting the sheen on hover would put it out of step with the draw. */
+  .mark.looping .sheen { animation: ag-sheen-loop 7s 0.15s infinite both; }
+  @keyframes ag-sheen-loop {
+    0%, 17.86% { opacity: 0; transform: translateX(-120px); animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1); }
+    23.86% { opacity: 1; animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1); }
+    37.86%, 100% { opacity: 0; transform: translateX(120px); }
+  }
+  /* Pause control: stop the loop with the mark fully drawn (not frozen mid-erase). */
+  :root[data-motion="paused"] .mark.looping .strokes path { animation: none; stroke-dasharray: none; }
+  :root[data-motion="paused"] .mark.looping .sheen { animation: none; }
 }
 
 /* ---------- identity ---------- */

@@ -81,11 +81,12 @@ accent/bg, accent/surface, status/surface and muted/raised.
 - **The identity column never animates in:** the name, status and resume button are visible on the first frame.
   The right column rises from 35% opacity over 0.6 s (50 ms stagger), with no blur. Why: on a cold browser start
   the animation clock stalled for 1-3 s, and opacity-0 entrances left the page blank.
-- **Monogram draw-in (about 1.5 s):** A legs, then the G, then the A crossbar, followed by a sheen (also on hover).
-  The strokes are fully drawn in the HTML; the draw is added only once the animation clock is running (two frames
-  fired, `document.timeline` advanced) and removed when the G finishes, so a stalled clock shows the finished mark,
-  never an empty tile. Skipped under reduced motion and when animation is paused. `data-draw` on the stroke group
-  records the decision for tests.
+- **Monogram loop (7 s):** the original draw-in, repeated. Both letters draw together over 1.6 s at one pen speed
+  (dash lengths 140 and 160 in user units), hold about 3.8 s fully drawn with a sheen at 1.4 s, erase over 1 s from
+  the start of each stroke, a 0.4 s beat, then redraw. The strokes are fully drawn in the HTML; the loop class is
+  added only once the animation clock is running (two frames fired, `document.timeline` advanced), so a stalled
+  clock shows the finished mark, never an empty tile. Reduced motion skips it; the Pause control stops it fully
+  drawn (CSS, so it follows toggles both ways). `data-draw` on the SVG records the decision for tests.
 - **Aurora:** one violet field drifts (transform only, about 26 s); the indigo field and the yellow glint are static.
   The grain uses no blend mode.
 - **Resume button glint:** a rotating conic layer clipped to the pill (a transform animation, so it runs on the compositor).
