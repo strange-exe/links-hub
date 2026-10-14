@@ -18,8 +18,9 @@ button styled like the portfolio's Download Resume button, and ideas from profes
 
 - **Palette:** graphite + one electric-blue signal (it replaced sun yellow on 2026-10-15). Flat surfaces,
   no gradients, glow, glass or blur.
-- **Background:** a 3D neuron network on a canvas (`components/Field.tsx`): nodes in a slowly turning volume,
-  linked to neighbours, with blue signals travelling along the links; it turns slightly toward the pointer.
+- **Background:** a small neural network training, in 3D on a canvas (`components/Field.tsx`): five layers as
+  columns that sway gently; a blue forward pass, a fainter backward pass, then the weights shift. It leans toward
+  the pointer.
 - **Surfaces:** solid sheets (`--surface`) with a 1 px border and a soft shadow; every piece of text sits on a
   sheet or on the solid page colour, never on the network.
 - **Monogram:** the AG strokes in the accent blue (`--mark`), so the loop stands out against the neutral type; no
@@ -97,9 +98,12 @@ releases `transform` for the tilt and magnet. A test fails if any entrance keyfr
 - **Kinetic name:** each letter rises 0.32 em with a 4 deg turn, 28 ms apart; the surname line is indented and muted.
 - **Sheets:** the identity and featured sheets settle with a spring (`cubic-bezier(.34,1.4,.5,1)`, 24 px, -1 deg);
   link rows rise 16 px in a 55 ms stagger.
-- **Network background:** about 90 nodes (56 on phones) in a turning volume (one turn about every 105 s), links
-  found once (rotation keeps distances), six blue signals hopping node to node. Starts only once the animation
-  clock runs; still frame under reduced motion, Pause, or a hidden tab. `data-field` records still/running.
+- **Training background:** layers of 4-7-8-6-3 nodes (3-5-6-4-2 on phones), fully connected (about 120 links).
+  Every 6.2 s: forward pass left to right (blue pulses sized by weight, nodes lit by activation) over 3.1 s, a beat,
+  a fainter backward pass right to left, then each weight shifts by up to 12%. The camera sways +/- 0.55 rad
+  instead of spinning so the columns stay readable. Links are batched into six opacity buckets (one stroke each):
+  120 separate strokes halved the frame rate. Starts only once the animation clock runs; the still frame (reduced
+  motion, Pause, hidden tab) shows the forward pass mid-way. `data-field` records still/running.
 - **Featured sheet:** tilts toward the pointer (up to 5 deg) with its title, stack and links shifting 2-5 px; a short
   blue run traces its border on hover or keyboard focus.
 - **View resume:** the portfolio's outline button with a blue segment travelling round the 1 px border every 4 s
@@ -114,7 +118,7 @@ releases `transform` for the tilt and magnet. A test fails if any entrance keyfr
 - **Pause control** (WCAG 2.2.2) stops the network, the strip, the border glint, the trace, the monogram loop, the
   tilt and the magnet; the choice is saved. `prefers-reduced-motion` stops everything.
 - **Measured** (Chromium, 4x CPU throttle, pointer moving, lab): about 53 fps with everything running, 60 paused
-  (Aurora Glass measured about 45 the same way).
+  (Aurora Glass measured about 45 the same way). With the training background: 41-47 fps.
 
 ## Decisions log
 
@@ -148,3 +152,5 @@ releases `transform` for the tilt and magnet. A test fails if any entrance keyfr
 - 2026-10-15: The user found the yellow and a cyan-only monogram unattractive. Of four single-accent previews on
   the real site (cyan, electric blue, emerald, monochrome) they picked **electric blue** for everything, including
   the AG loop, favicon and OG image.
+- 2026-10-15: Background changed from the neuron network to an ML "doodle": of three previews (training a
+  network, gradient descent on a loss landscape, k-means clusters) the user chose **training a network**.

@@ -1,7 +1,7 @@
 # links.abhinesh.codes
 
-Link hub for Abhinesh Gangwar, in the "Signal" style: graphite with a single sun-yellow signal, a live 3D neuron
-network behind solid sheets, kinetic type, and a self-drawing AG monogram. It's built with Next.js and exported as
+Link hub for Abhinesh Gangwar, in the "Signal" style: graphite with a single electric-blue signal, a 3D neural
+network training behind solid sheets, kinetic type, and a self-drawing AG monogram. It's built with Next.js and exported as
 static files, so any static host can serve it.
 
 ## Features
@@ -9,10 +9,10 @@ static files, so any static host can serve it.
 - Resume-first layout for recruiters, then the featured project and grouped profile links (two columns on desktop)
 - Custom resume viewer at `/resume/`: PDF.js renders the live PDF from abhinesh.codes, with a page counter, zoom
   (buttons and `-` `+` `0` keys), a real download, and loading and error states. PDF.js loads only on that page.
-- Canvas 3D neuron network (no three.js): turning node volume with signals travelling along links; it pauses in
+- Canvas 3D neural network training (no three.js): forward and backward passes sweep through the layers; it pauses in
   hidden tabs and with the Pause control (WCAG 2.2.2), and draws one still frame under `prefers-reduced-motion`
 - Motion that never hides content: letter-by-letter name, spring-settling sheets, a tilting featured card with a
-  border trace, sun-yellow wipes on link rows, a magnetic View resume button styled like the portfolio's, and a
+  border trace, blue wipes on link rows, a magnetic View resume button styled like the portfolio's, and a
   skills strip
 - Phosphor icons rendered on the server (no icon JavaScript in the browser)
 - Light and dark mode that follows the system, with a saved manual override and no flash on load
