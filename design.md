@@ -16,17 +16,17 @@ redesign with modern motion. Three static themes (Mono Terminal, Ink and Paper, 
 a **mix of all three on Signal Field's palette**, then asked for a 3D "neuron linkage" background, a View resume
 button styled like the portfolio's Download Resume button, and ideas from professional sites.
 
-- **Palette:** graphite + one sun-yellow signal (the yellow carries over from the earlier brand). Flat surfaces,
+- **Palette:** graphite + one electric-blue signal (it replaced sun yellow on 2026-10-15). Flat surfaces,
   no gradients, glow, glass or blur.
 - **Background:** a 3D neuron network on a canvas (`components/Field.tsx`): nodes in a slowly turning volume,
-  linked to neighbours, with yellow signals travelling along the links; it turns slightly toward the pointer.
+  linked to neighbours, with blue signals travelling along the links; it turns slightly toward the pointer.
 - **Surfaces:** solid sheets (`--surface`) with a 1 px border and a soft shadow; every piece of text sits on a
   sheet or on the solid page colour, never on the network.
-- **Monogram:** the AG strokes in cyan (`--mark`, the portfolio's `#06b6d4`; user's request 2026-10-15, to make
-  the loop stand out), no tile, on the 7 s draw/hold/erase loop. Cyan is used nowhere else.
+- **Monogram:** the AG strokes in the accent blue (`--mark`), so the loop stands out against the neutral type; no
+  tile, on the 7 s draw/hold/erase loop.
 - **Type:** Geist for display and body, JetBrains Mono for labels, handles, status and every button (as on the portfolio).
-- **Yellow is the only other colour:** network signals, the View resume border glint, the link-row hover wipe, the
-  status dot, the featured-card trace and labels in dark mode (`#8a5a00` ink in light mode for text-safe contrast).
+- **Blue is the only colour:** the AG loop, network signals, the View resume border glint, the link-row hover wipe,
+  the status dot, the featured-card trace and labels (`#7c9cff` on dark, `#3451d1` ink on light for text contrast).
 
 **Inspiration (2026-10-15):** brittanychiang.com (sticky identity column while content scrolls), rauno.me
 (indented statement lines, one bold flat signal colour), leerob.com and emilkowal.ski (restraint: short copy,
@@ -35,7 +35,7 @@ motion mostly on interaction).
 ## Reading order
 
 1. Monogram, name (second line indented, muted), role, availability status
-2. **View resume** (portfolio-style outline button with a travelling yellow border; opens `/resume/`) + Email (plain outline)
+2. **View resume** (portfolio-style outline button with a travelling blue border; opens `/resume/`) + Email (plain outline)
 3. Featured project sheet
 4. Link groups: Work, then Elsewhere
 5. Tools: copy email, QR code, colour mode, pause motion (a quiet toolbar of borderless buttons)
@@ -55,13 +55,13 @@ On a 390 × 844 phone, the resume button sits in the first viewport.
 | `--border` | `#2a2a2e` | `#dcdcd8` | sheet and row borders |
 | `--text` | `#ededed` | `#111111` | body |
 | `--muted` | `#9b9b9f` | `#55555a` | secondary text, second name line |
-| `--accent` | `#f5b942` | `#8a5a00` | signal, text-safe: labels, readouts, trace |
-| `--cta` / `--on-cta` | `#f5b942` / `#0b0b0c` | `#111111` / `#f4f4f2` | skip link, viewer primary button |
-| `--wipe` / `--on-wipe` | `#f5b942` / `#0b0b0c` | same | link-row hover fill and its text |
-| `--focus` | `#f5b942` | `#8a5a00` | focus ring |
-| `--status` | `#f5b942` | `#8a5a00` | availability dot (always with text) |
+| `--accent` | `#7c9cff` | `#3451d1` | signal, text-safe: labels, readouts, trace |
+| `--cta` / `--on-cta` | `#7c9cff` / `#0b0b0c` | `#111111` / `#f4f4f2` | skip link, viewer primary button |
+| `--wipe` / `--on-wipe` | `#7c9cff` / `#0b0b0c` | same | link-row hover fill and its text |
+| `--focus` | `#7c9cff` | `#3451d1` | focus ring |
+| `--status` | `#7c9cff` | `#3451d1` | availability dot (always with text) |
 | `--dot` | `237 237 237` | `17 17 17` | RGB of the network's nodes and links |
-| `--mark` | `#06b6d4` | `#0891b2` | AG monogram (cyan, the portfolio's accent; 7.8:1 / 3.7:1 on the sheet) |
+| `--mark` | `#7c9cff` | `#3451d1` | AG monogram in the accent (7.2:1 / 6.5:1 on the sheet) |
 
 The end-to-end suite checks contrast from the built site, in both modes: text, muted, on-cta/cta, on-wipe/wipe,
 focus/bg, focus/surface, accent/bg, accent/surface, status/surface, mark/surface and muted/raised.
@@ -98,14 +98,14 @@ releases `transform` for the tilt and magnet. A test fails if any entrance keyfr
 - **Sheets:** the identity and featured sheets settle with a spring (`cubic-bezier(.34,1.4,.5,1)`, 24 px, -1 deg);
   link rows rise 16 px in a 55 ms stagger.
 - **Network background:** about 90 nodes (56 on phones) in a turning volume (one turn about every 105 s), links
-  found once (rotation keeps distances), six yellow signals hopping node to node. Starts only once the animation
+  found once (rotation keeps distances), six blue signals hopping node to node. Starts only once the animation
   clock runs; still frame under reduced motion, Pause, or a hidden tab. `data-field` records still/running.
 - **Featured sheet:** tilts toward the pointer (up to 5 deg) with its title, stack and links shifting 2-5 px; a short
-  yellow run traces its border on hover or keyboard focus.
-- **View resume:** the portfolio's outline button with a yellow segment travelling round the 1 px border every 4 s
+  blue run traces its border on hover or keyboard focus.
+- **View resume:** the portfolio's outline button with a blue segment travelling round the 1 px border every 4 s
   (a rotating conic layer, compositor-only), a 2 px lift on hover, and a magnetic lean (up to 8 / 6 px) toward a
   nearby pointer.
-- **Link rows:** a sun-yellow wipe sweeps in from the left on hover or keyboard focus; the name slides 6 px and the
+- **Link rows:** a soft blue wipe sweeps in from the left on hover or keyboard focus; the name slides 6 px and the
   arrow turns 45 deg.
 - **Monogram loop (7 s):** both letters draw together over 1.6 s at one pen speed (dash lengths 140 and 160), hold
   about 3.8 s, erase over 1 s, a 0.4 s beat, redraw. Fully drawn in the HTML; the loop class is added only once the
@@ -145,3 +145,6 @@ releases `transform` for the tilt and magnet. A test fails if any entrance keyfr
   cursor spotlight glow, the violet bevel button, the gradient status chip, link icon tiles, the monogram's tile,
   gradient and sheen. Font changed from Plus Jakarta Sans to Geist. Favicon and OG image redrawn to match.
   "Neuron linkage" was read as a neural network of linked nodes (it echoes the portfolio's constellation).
+- 2026-10-15: The user found the yellow and a cyan-only monogram unattractive. Of four single-accent previews on
+  the real site (cyan, electric blue, emerald, monochrome) they picked **electric blue** for everything, including
+  the AG loop, favicon and OG image.

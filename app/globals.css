@@ -1,9 +1,10 @@
 /* ---------- tokens (see design.md) ---------- */
-/* "Signal" (chosen 2026-10-15 as a mix of three motion previews): graphite + one sun-yellow signal.
+/* "Signal" (chosen 2026-10-15 as a mix of three motion previews): graphite + one electric-blue signal
+   (blue replaced sun yellow and the cyan monogram on 2026-10-15, user's pick of four previews).
    --accent   text-safe signal colour (labels, focus, trace).   --cta/--on-cta  the View resume button.
-   --wipe     link-row hover fill (sun yellow in both modes).    --dot  RGB of the background field's dots.
+   --wipe     link-row hover fill (soft blue in both modes).      --dot  RGB of the background field's dots.
    --status   availability dot (always beside text).             --focus  focus ring (3:1 on --bg).
-   --mark     the AG monogram: cyan, the portfolio's accent (3:1+ on --surface, as a meaningful graphic). */
+   --mark     the AG monogram, in the accent (3:1+ on --surface, as a meaningful graphic). */
 :root {
   color-scheme: light;
   --bg: #f4f4f2;
@@ -12,15 +13,15 @@
   --border: #dcdcd8;
   --text: #111111;
   --muted: #55555a;
-  --accent: #8a5a00;
+  --accent: #3451d1;
   --cta: #111111;
   --on-cta: #f4f4f2;
-  --wipe: #f5b942;
+  --wipe: #7c9cff;
   --on-wipe: #0b0b0c;
-  --focus: #8a5a00;
-  --status: #8a5a00;
+  --focus: #3451d1;
+  --status: #3451d1;
   --dot: 17 17 17;
-  --mark: #0891b2;
+  --mark: #3451d1;
   --shadow: 0 1px 0 rgb(17 17 17 / 0.05), 0 22px 48px -24px rgb(17 17 17 / 0.28);
   --glass: var(--surface);
 
@@ -53,13 +54,13 @@
     --border: #2a2a2e;
     --text: #ededed;
     --muted: #9b9b9f;
-    --accent: #f5b942;
-    --cta: #f5b942;
+    --accent: #7c9cff;
+    --cta: #7c9cff;
     --on-cta: #0b0b0c;
-    --focus: #f5b942;
-    --status: #f5b942;
+    --focus: #7c9cff;
+    --status: #7c9cff;
     --dot: 237 237 237;
-    --mark: #06b6d4;
+    --mark: #7c9cff;
     --shadow: 0 1px 0 rgb(255 255 255 / 0.04), 0 22px 48px -24px rgb(0 0 0 / 0.9);
   }
 }
@@ -71,13 +72,13 @@
   --border: #2a2a2e;
   --text: #ededed;
   --muted: #9b9b9f;
-  --accent: #f5b942;
-  --cta: #f5b942;
+  --accent: #7c9cff;
+  --cta: #7c9cff;
   --on-cta: #0b0b0c;
-  --focus: #f5b942;
-  --status: #f5b942;
+  --focus: #7c9cff;
+  --status: #7c9cff;
   --dot: 237 237 237;
-  --mark: #06b6d4;
+  --mark: #7c9cff;
   --shadow: 0 1px 0 rgb(255 255 255 / 0.04), 0 22px 48px -24px rgb(0 0 0 / 0.9);
 }
 
@@ -171,7 +172,7 @@ a { color: inherit; }
 @media (min-width: 1024px) { .identity { padding: 36px; } }
 
 /* ---------- monogram: plain stroke, the 7 s draw/hold/erase loop ---------- */
-/* Cyan, the portfolio's own accent (#06b6d4), so the mark stands apart from the yellow signals. */
+/* The accent blue, so the loop stands out against the neutral type. */
 .mark { display: block; width: 84px; height: 54px; color: var(--mark); }
 .mark .strokes path { fill: none; stroke: currentColor; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
 @media (prefers-reduced-motion: no-preference) {
@@ -231,7 +232,7 @@ a { color: inherit; }
 /* View resume, matched to the portfolio's "Download Resume" button (abhinesh.codes .btn-outline.btn-glow):
    an outlined mono button with a file icon, a bright segment travelling round its 1 px border every 4 s, and a
    2 px lift on hover. The portfolio animates an @property angle; here a conic layer ROTATES behind a 1 px-inset
-   fill (compositor-only), and the segment is the site's sun yellow instead of the portfolio's cyan/violet. */
+   fill (compositor-only), and the segment is the site's blue instead of the portfolio's cyan/violet. */
 .cta {
   flex: 1;
   position: relative; isolation: isolate; overflow: hidden;
@@ -337,7 +338,7 @@ a { color: inherit; }
   text-decoration: none;
   font-weight: 600;
 }
-/* Ink wipe: sun yellow sweeps in from the left on hover or keyboard focus; text flips to dark on it. */
+/* Ink wipe: the soft blue sweeps in from the left on hover or keyboard focus; text flips to dark on it. */
 .link::before {
   content: ""; position: absolute; inset: 0; z-index: -1;
   background: var(--wipe);

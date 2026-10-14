@@ -106,7 +106,7 @@ for (const scheme of ["light", "dark"] as const) {
         ["--muted", "--surface", 4.5],
         ["--text", "--raised", 4.5],
         ["--on-cta", "--cta", 4.5], // skip link and the viewer's primary button
-        ["--on-wipe", "--wipe", 4.5], // link row text on the sun-yellow hover fill
+        ["--on-wipe", "--wipe", 4.5], // link row text on the blue hover fill
         ["--focus", "--bg", 3], // focus ring
         ["--focus", "--surface", 3],
         ["--accent", "--bg", 4.5], // signal labels and readouts
@@ -414,14 +414,14 @@ test("status: real text immediately, dot hidden from assistive tech", async ({ p
   await expect(status.locator(".dot")).toHaveAttribute("aria-hidden", "true");
 });
 
-test("link rows: sun-yellow wipe on hover and on keyboard focus, text stays readable on it", async ({ page }) => {
+test("link rows: blue wipe on hover and on keyboard focus, text stays readable on it", async ({ page }) => {
   await openIn(page, { colorScheme: "dark", reducedMotion: "no-preference" });
   const link = page.getByRole("link", { name: /GitHub/ });
   const wipe = () => link.evaluate((el) => getComputedStyle(el, "::before").transform);
   expect(await wipe()).toMatch(/^matrix\(0, /); // scaleX(0) at rest
   await link.hover();
   await expect.poll(wipe).toBe("matrix(1, 0, 0, 1, 0, 0)");
-  await expect(link).toHaveCSS("color", "rgb(11, 11, 12)"); // --on-wipe on the yellow fill
+  await expect(link).toHaveCSS("color", "rgb(11, 11, 12)"); // --on-wipe on the blue fill
 });
 
 test("View resume leans toward a nearby pointer and Pause turns that off", async ({ page }) => {

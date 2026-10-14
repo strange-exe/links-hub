@@ -43,11 +43,11 @@ header.writeUInt32LE(22, 18); // image offset
 await writeFile(new URL("../app/favicon.ico", import.meta.url), Buffer.concat([header, png32]));
 
 // Open Graph card ("Signal" theme): graphite, a faint node network on the right, plain AG stroke, two-line name,
-// mono status with the sun-yellow dot.
+// mono status with the blue dot.
 const nodes = [[760, 90], [880, 160], [1010, 110], [1120, 210], [820, 300], [960, 280], [1090, 360], [870, 430], [1000, 470], [1150, 520], [780, 540], [930, 590]];
 const links = [[0, 1], [1, 2], [2, 3], [1, 4], [1, 5], [5, 3], [5, 6], [4, 7], [7, 8], [8, 6], [6, 9], [8, 9], [7, 10], [10, 11], [8, 11], [4, 5]];
 const net = links.map(([a, b]) => `<line x1="${nodes[a][0]}" y1="${nodes[a][1]}" x2="${nodes[b][0]}" y2="${nodes[b][1]}"/>`).join("")
-  + nodes.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="${i % 4 === 1 ? 5 : 3}"${i === 5 ? ' style="fill:#f5b942"' : ""}/>`).join("");
+  + nodes.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="${i % 4 === 1 ? 5 : 3}"${i === 5 ? ' style="fill:#7c9cff"' : ""}/>`).join("");
 await page.setViewportSize({ width: 1200, height: 630 });
 await page.setContent(`<!doctype html><html><head>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -61,12 +61,12 @@ await page.setContent(`<!doctype html><html><head>
   h1{font-size:96px;line-height:.98;margin:0 0 30px;font-weight:800;letter-spacing:-.045em}
   h1 span{display:block;margin-left:.5em;color:#9b9b9f}
   .status{display:flex;gap:14px;align-items:center;font:500 24px 'JetBrains Mono',monospace}
-  .dot{width:14px;height:14px;border-radius:50%;background:#f5b942}
+  .dot{width:14px;height:14px;border-radius:50%;background:#7c9cff}
   .url{position:absolute;right:64px;bottom:52px;font:500 22px 'JetBrains Mono',monospace;color:#9b9b9f}
 </style></head><body>
 <svg class="net" viewBox="0 0 1200 630">${net}</svg>
 <div class="wrap">
-  <svg class="mark" viewBox="8 18 104 66"><g fill="none" stroke="#ededed" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 78 L30 24 H38 L54 78 M21 60 H47"/><path d="M99.2 35.9 A25 25 0 1 0 105 52 H87"/></g></svg>
+  <svg class="mark" viewBox="8 18 104 66"><g fill="none" stroke="#7c9cff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 78 L30 24 H38 L54 78 M21 60 H47"/><path d="M99.2 35.9 A25 25 0 1 0 105 52 H87"/></g></svg>
   <h1>Abhinesh<span>Gangwar.</span></h1>
   <div class="status"><span class="dot"></span>Open to SWE or ML internships</div>
 </div>

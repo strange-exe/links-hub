@@ -7,7 +7,7 @@ type Pulse = { edge: number; t: number; speed: number };
 
 /**
  * Decorative 3D background: a neuron-style network. Nodes sit in a slowly turning 3D volume (rotation about Y and
- * X, perspective projection), neighbours are linked, and sun-yellow signals travel along random links like
+ * X, perspective projection), neighbours are linked, and blue signals travel along random links like
  * firing neurons. A fine pointer turns the network slightly toward it.
  *
  * Costs and guards:
@@ -30,7 +30,7 @@ export default function Field() {
     const fine = matchMedia("(pointer: fine)");
 
     let w = 0, h = 0, raf = 0, start = 0, last = 0;
-    let ink = "237 237 237", signal = "#f5b942";
+    let ink = "237 237 237", signal = "#7c9cff";
     let aimX = 0, aimY = 0, tiltX = 0, tiltY = 0;
     let nodes: Node[] = [];
     let edges: [number, number][] = [];
