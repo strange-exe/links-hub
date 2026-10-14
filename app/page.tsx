@@ -68,7 +68,7 @@ export default function Page() {
         </header>
 
         <div className="content">
-          <section className="shell rise" style={{ "--i": 5 } as CSSProperties} aria-labelledby="feat-h">
+          <section className="shell tilt rise" style={{ "--i": 5 } as CSSProperties} aria-labelledby="feat-h">
             <div className="feat spot">
               {/* Comment-style label, as on abhinesh.codes */}
               <p className="kicker">{"// featured project"}</p>

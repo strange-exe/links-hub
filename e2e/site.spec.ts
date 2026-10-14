@@ -371,6 +371,82 @@ test("spotlight follows the pointer over a link", async ({ page }) => {
   await expect.poll(() => link.evaluate((el) => getComputedStyle(el, "::before").opacity)).toBe("1");
 });
 
+test("right column is readable from the first frame: its entrance never animates opacity", async ({ page }) => {
+  // Regression: the entrance started at 35% opacity, and in a fresh Chromium the stalled animation clock held the
+  // featured project and every link there for 2-3 s. The keyframes may move the column, never fade it.
+  await openIn(page, { reducedMotion: "no-preference" });
+  const rises = await page.locator(".content .rise, .foot.rise").evaluateAll((els) =>
+    els.map((el) => ({
+      opacity: getComputedStyle(el).opacity,
+      fades: el.getAnimations().some((a) => (a.effect as KeyframeEffect).getKeyframes().some((k) => "opacity" in k)),
+    })),
+  );
+  expect(rises.length).toBeGreaterThan(2);
+  for (const r of rises) expect(r).toEqual({ opacity: "1", fades: false });
+});
+
+test("type uses one scale: at most six distinct font sizes on the page", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const sizes = await page.evaluate(() => {
+    const set = new Set<string>();
+    for (const el of document.querySelectorAll("body *")) {
+      const own = [...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && n.textContent!.trim());
+      if (own && el.getClientRects().length) set.add(getComputedStyle(el).fontSize);
+    }
+    return [...set].map(parseFloat).sort((a, b) => a - b);
+  });
+  expect(sizes.length, `sizes: ${sizes.join(", ")}`).toBeLessThanOrEqual(6);
+  for (const s of sizes) expect([12, 14, 16, 18, 22, 56], `unexpected ${s}px`).toContain(s);
+});
+
+// The entrance holds its start offset while a fresh browser's animation clock is stalled (by design: readable,
+// just 14px low), so measurements of final positions and transforms wait for it to finish.
+const riseDone = (page: Page) =>
+  page.evaluate(() =>
+    Promise.all(document.getAnimations().filter((a) => (a as CSSAnimation).animationName === "rise").map((a) => a.finished)),
+  );
+
+test("desktop: the toolbar ends level with the last link, not under the resume button", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await riseDone(page);
+  const foot = (await page.locator(".foot").boundingBox())!;
+  const links = (await page.locator("#links").boundingBox())!;
+  const ctas = (await page.locator(".ctas").boundingBox())!;
+  expect(Math.abs(foot.y + foot.height - (links.y + links.height))).toBeLessThanOrEqual(4);
+  expect(foot.y).toBeGreaterThan(ctas.y + ctas.height + 40);
+});
+
+// Unrotated: the matrix's rotation terms are identity. perspective() alone still adds a depth term (m34), so a
+// flat card is not literally an identity matrix.
+const flat = (t: string) => {
+  if (t === "none" || t.startsWith("matrix(")) return true;
+  const m = t.slice(9, -1).split(",").map(Number); // matrix3d(...)
+  return [m[0] - 1, m[1], m[2], m[4], m[5] - 1, m[6], m[8], m[9]].every((v) => Math.abs(v) < 1e-3);
+};
+
+test("featured card tilts toward the pointer, settles when it leaves, and Pause turns it off", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openIn(page, { colorScheme: "dark", reducedMotion: "no-preference" });
+  const shell = page.locator(".shell");
+  const transform = () => shell.evaluate((el) => getComputedStyle(el).transform);
+  await riseDone(page);
+  const box = (await shell.boundingBox())!;
+  expect(flat(await transform())).toBe(true);
+  await page.mouse.move(box.x + 30, box.y + 20);
+  await page.mouse.move(box.x + 40, box.y + 24);
+  await expect.poll(() => shell.evaluate((el) => (el as HTMLElement).style.getPropertyValue("--tx"))).toMatch(/^-0\.\d+$/);
+  await expect.poll(async () => flat(await transform())).toBe(false);
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height + 400); // off the card
+  await expect.poll(async () => flat(await transform()), { timeout: 3_000 }).toBe(true);
+  await page.getByRole("button", { name: "Pause background animation" }).click();
+  await page.mouse.move(box.x + 30, box.y + 20);
+  await page.mouse.move(box.x + 40, box.y + 24);
+  await expect.poll(() => shell.evaluate((el) => (el as HTMLElement).style.getPropertyValue("--tx"))).toMatch(/^-0\.\d+$/);
+  await expect.poll(transform, { timeout: 3_000 }).toBe("none"); // settles flat through its transition
+});
+
 test("content: https links, valid Person JSON-LD, decorative background hidden from AT", async ({ page }) => {
   await page.goto("/");
   const hrefs = await page.locator("a[href]").evaluateAll((as) => as.map((a) => a.getAttribute("href")!));

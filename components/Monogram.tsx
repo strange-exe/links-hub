@@ -33,7 +33,7 @@ export default function Monogram() {
   }, []);
 
   return (
-    <svg ref={mark} className="mark" viewBox="0 0 120 100" role="img" aria-label="AG monogram">
+    <svg ref={mark} className="mark tilt" viewBox="0 0 120 100" role="img" aria-label="AG monogram">
       <defs>
         <linearGradient id="ag-stroke" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="var(--text)" />

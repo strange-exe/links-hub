@@ -30,9 +30,10 @@ comment-style labels.
 2. **View resume** (sun-yellow pill in dark mode, violet with a yellow arrow circle in light mode; opens `/resume/`) + Email (glass pill)
 3. Featured project
 4. Link groups: Work, then Elsewhere
-5. Tools: copy email, QR code, colour mode, pause motion
+5. Tools: copy email, QR code, colour mode, pause motion (a quiet toolbar of borderless buttons; hover brings the glass back)
 
-The **≥ 1024 px** layout is two columns: identity and actions pinned on the left, content on the right. Below that, it's a single column.
+The **≥ 1024 px** layout is two columns: identity and actions on the left, content on the right, with the toolbar
+pinned to the bottom of the left column, level with the last link. Below that, it's a single column.
 On a 390 × 844 phone, the resume button sits in the first viewport.
 
 ## Tokens
@@ -72,15 +73,23 @@ accent/bg, accent/surface, status/surface and muted/raised.
 
 ## Type, space, shape
 
-- Scale: 12 / 13 / 14 / 15 / 16 / 20 / clamp(40-56) px. Display weight 800 with tight tracking.
+- Scale (tokens `--fs-xs` to `--fs-display`): 12 / 14 / 16 / 18 / 22 / clamp(40-56) px. Mono text (handles,
+  stack, kicker, readouts) is 12. Display weight 800 with tight tracking. A test fails if the page renders more
+  than six sizes or one outside the scale.
 - Space: 4 / 8 / 12 / 16 / 20 / 24 / 32 / 48 / 64 px.
 - Shape rule: actions are full pills, cards use 24 px radius (a 6 px bezel shell around 18 px inner), and link rows and icon tiles use 16 / 12 px.
 
 ## Motion
 
 - **The identity column never animates in:** the name, status and resume button are visible on the first frame.
-  The right column rises from 35% opacity over 0.6 s (50 ms stagger), with no blur. Why: on a cold browser start
-  the animation clock stalled for 1-3 s, and opacity-0 entrances left the page blank.
+  The right column rises 14 px over 0.7 s (50 ms stagger) with no opacity change and no blur. Why: on a cold
+  browser start the animation clock stalled for 1-3 s; opacity-0 entrances left the page blank, and the later
+  35%-opacity start held the featured project and every link at 35% for 2-3 s in a fresh Chromium (measured
+  2026-10-14). The fill mode is `backwards`, so the finished entrance releases `transform` for the tilt.
+- **Tilt (3D card, from the aceternity and 3d-web-experience skills, CSS only):** the featured card turns toward the
+  pointer by up to 5 deg (perspective 1000 px) and its title, stack and links shift 2-5 px with it; the AG tile
+  turns up to 8 deg. `components/Spotlight.tsx` feeds `--tx/--ty` from the same batched pointer listener. Fine
+  pointers only; off under reduced motion and Pause.
 - **Monogram loop (7 s):** the original draw-in, repeated. Both letters draw together over 1.6 s at one pen speed
   (dash lengths 140 and 160 in user units), hold about 3.8 s fully drawn with a sheen at 1.4 s, erase over 1 s from
   the start of each stroke, a 0.4 s beat, then redraw. The strokes are fully drawn in the HTML; the loop class is
@@ -115,3 +124,9 @@ accent/bg, accent/surface, status/surface and muted/raised.
   (live line, gradient chip, split badge) after rejecting the yellow-tinted pill and the neutral mono pill.
   - Brand board built per the brandkit skill as HTML and rendered to PNG (no image generator in this environment):
     `.claude/design/brandkit.html`/`.png`.
+- 2026-10-14: Audit with the gpt-taste, high-end-visual-design, 3d-web-experience and aceternity skills. Rating:
+  needs polish, not a redesign. The user picked all four quick wins: the cold-start fade fix, a quieter toolbar
+  pinned level with the last link, a six-step type scale, and the pointer tilt. Not applied (they suit long
+  landing pages, not a one-screen link hub): AIDA sections, bento grids, GSAP scroll effects, stock imagery,
+  a floating nav, eyebrow tags, very large section padding, and a font change (the font matches the portfolio).
+  Offered but not chosen: a screenshot thumbnail on the featured card.
