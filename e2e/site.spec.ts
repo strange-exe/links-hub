@@ -112,6 +112,7 @@ for (const scheme of ["light", "dark"] as const) {
         ["--accent", "--bg", 4.5], // signal labels and readouts
         ["--accent", "--surface", 4.5], // the "// featured project" label is accent text on a sheet
         ["--status", "--surface", 3], // availability dot (paired with text)
+        ["--mark", "--surface", 3], // AG monogram, a named graphic on the identity sheet
         ["--muted", "--raised", 4.5],
       ];
       return pairs.map(([f, b, min]) => ({ pair: `${f} on ${b}`, ratio: +ratio(f, b).toFixed(2), min }));

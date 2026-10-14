@@ -22,9 +22,10 @@ button styled like the portfolio's Download Resume button, and ideas from profes
   linked to neighbours, with yellow signals travelling along the links; it turns slightly toward the pointer.
 - **Surfaces:** solid sheets (`--surface`) with a 1 px border and a soft shadow; every piece of text sits on a
   sheet or on the solid page colour, never on the network.
-- **Monogram:** the AG strokes in the text colour, no tile, on the 7 s draw/hold/erase loop.
+- **Monogram:** the AG strokes in cyan (`--mark`, the portfolio's `#06b6d4`; user's request 2026-10-15, to make
+  the loop stand out), no tile, on the 7 s draw/hold/erase loop. Cyan is used nowhere else.
 - **Type:** Geist for display and body, JetBrains Mono for labels, handles, status and every button (as on the portfolio).
-- **Yellow is the only colour:** network signals, the View resume border glint, the link-row hover wipe, the
+- **Yellow is the only other colour:** network signals, the View resume border glint, the link-row hover wipe, the
   status dot, the featured-card trace and labels in dark mode (`#8a5a00` ink in light mode for text-safe contrast).
 
 **Inspiration (2026-10-15):** brittanychiang.com (sticky identity column while content scrolls), rauno.me
@@ -60,9 +61,10 @@ On a 390 × 844 phone, the resume button sits in the first viewport.
 | `--focus` | `#f5b942` | `#8a5a00` | focus ring |
 | `--status` | `#f5b942` | `#8a5a00` | availability dot (always with text) |
 | `--dot` | `237 237 237` | `17 17 17` | RGB of the network's nodes and links |
+| `--mark` | `#06b6d4` | `#0891b2` | AG monogram (cyan, the portfolio's accent; 7.8:1 / 3.7:1 on the sheet) |
 
 The end-to-end suite checks contrast from the built site, in both modes: text, muted, on-cta/cta, on-wipe/wipe,
-focus/bg, focus/surface, accent/bg, accent/surface, status/surface and muted/raised.
+focus/bg, focus/surface, accent/bg, accent/surface, status/surface, mark/surface and muted/raised.
 
 ## Resume viewer (`/resume/`)
 

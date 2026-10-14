@@ -2,7 +2,8 @@
 /* "Signal" (chosen 2026-10-15 as a mix of three motion previews): graphite + one sun-yellow signal.
    --accent   text-safe signal colour (labels, focus, trace).   --cta/--on-cta  the View resume button.
    --wipe     link-row hover fill (sun yellow in both modes).    --dot  RGB of the background field's dots.
-   --status   availability dot (always beside text).             --focus  focus ring (3:1 on --bg). */
+   --status   availability dot (always beside text).             --focus  focus ring (3:1 on --bg).
+   --mark     the AG monogram: cyan, the portfolio's accent (3:1+ on --surface, as a meaningful graphic). */
 :root {
   color-scheme: light;
   --bg: #f4f4f2;
@@ -19,6 +20,7 @@
   --focus: #8a5a00;
   --status: #8a5a00;
   --dot: 17 17 17;
+  --mark: #0891b2;
   --shadow: 0 1px 0 rgb(17 17 17 / 0.05), 0 22px 48px -24px rgb(17 17 17 / 0.28);
   --glass: var(--surface);
 
@@ -57,6 +59,7 @@
     --focus: #f5b942;
     --status: #f5b942;
     --dot: 237 237 237;
+    --mark: #06b6d4;
     --shadow: 0 1px 0 rgb(255 255 255 / 0.04), 0 22px 48px -24px rgb(0 0 0 / 0.9);
   }
 }
@@ -74,6 +77,7 @@
   --focus: #f5b942;
   --status: #f5b942;
   --dot: 237 237 237;
+  --mark: #06b6d4;
   --shadow: 0 1px 0 rgb(255 255 255 / 0.04), 0 22px 48px -24px rgb(0 0 0 / 0.9);
 }
 
@@ -167,7 +171,8 @@ a { color: inherit; }
 @media (min-width: 1024px) { .identity { padding: 36px; } }
 
 /* ---------- monogram: plain stroke, the 7 s draw/hold/erase loop ---------- */
-.mark { display: block; width: 84px; height: 54px; color: var(--text); }
+/* Cyan, the portfolio's own accent (#06b6d4), so the mark stands apart from the yellow signals. */
+.mark { display: block; width: 84px; height: 54px; color: var(--mark); }
 .mark .strokes path { fill: none; stroke: currentColor; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
 @media (prefers-reduced-motion: no-preference) {
   /* Both letters draw together over 1.6 s at one pen speed (dash lengths in user units), hold, erase over 1 s
