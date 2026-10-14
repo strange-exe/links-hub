@@ -5,65 +5,72 @@
 - **What:** a link-in-bio hub for Abhinesh Gangwar, at `links.abhinesh.codes`.
 - **Audience:** recruiters and hiring engineers first, peers second.
 - **Primary job:** get a recruiter to the resume (or an email) in one tap; then GitHub, LinkedIn, the portfolio.
-- **Feeling:** modern, futuristic, professional. It must read as the same brand as abhinesh.codes.
+- **Feeling:** modern, motion-led, professional. It must read as the same brand as abhinesh.codes.
 - **Constraints:** static export, mobile-first, WCAG 2.2 AA, initial JS within ~200 KB gzip.
 
-## Theme: Aurora Glass (chosen 2026-10-12, replaces Terminal + Orbit)
+## Theme: Signal (chosen 2026-10-15, replaces Aurora Glass)
 
-The user picked this from three redesign directions (Signal Field, Aurora Glass, Constellation) after asking for a
-modern UI, an interactive background and a better monogram, and then asked for it to match the portfolio.
+The user called Aurora Glass "AI sloppy" (purple glow, glass, gradient hairlines, pills, icon tiles) and asked for a
+redesign with modern motion. Three static themes (Mono Terminal, Ink and Paper, Swiss Signal) were rejected for
+"a modern motion styled design"; of three motion previews (Kinetic Type, Signal Field, Paper Motion) the user chose
+a **mix of all three on Signal Field's palette**, then asked for a 3D "neuron linkage" background, a View resume
+button styled like the portfolio's Download Resume button, and ideas from professional sites.
 
-**Palette (2026-10-12, user's request): midnight black + electric violet + a shot of sun yellow.** This replaces
-the portfolio's emerald/cyan. The portfolio continuity that remains: near-black base, JetBrains Mono labels, `//`
-comment-style labels.
+- **Palette:** graphite + one sun-yellow signal (the yellow carries over from the earlier brand). Flat surfaces,
+  no gradients, glow, glass or blur.
+- **Background:** a 3D neuron network on a canvas (`components/Field.tsx`): nodes in a slowly turning volume,
+  linked to neighbours, with yellow signals travelling along the links; it turns slightly toward the pointer.
+- **Surfaces:** solid sheets (`--surface`) with a 1 px border and a soft shadow; every piece of text sits on a
+  sheet or on the solid page colour, never on the network.
+- **Monogram:** the AG strokes in the text colour, no tile, on the 7 s draw/hold/erase loop.
+- **Type:** Geist for display and body, JetBrains Mono for labels, handles, status and every button (as on the portfolio).
+- **Yellow is the only colour:** network signals, the View resume border glint, the link-row hover wipe, the
+  status dot, the featured-card trace and labels in dark mode (`#8a5a00` ink in light mode for text-safe contrast).
 
-- **Background:** a fixed aurora of violet and indigo fields with one small sun-yellow glint low on the page, plus film grain on a fixed, non-interactive layer.
-- **Surfaces:** translucent glass panels with a gradient hairline border (violet to yellow) and a violet cursor spotlight.
-- **Monogram:** a flat-topped A beside a geometric G; the stroke runs white, violet, deep violet, then a yellow tip, on a glass tile. The strokes draw in on load.
-- **Type:** Plus Jakarta Sans for display and body, JetBrains Mono for labels, handles and status (the portfolio's mono).
-- **Yellow is rationed:** the arrow inside the resume button, the availability dot, the focus ring in dark mode, the aurora glint and the monogram tip. Nothing else.
-  (A solid yellow button was tried and rejected by the user on 2026-10-12. Of three previews, Violet Core was chosen because it matches the site.)
+**Inspiration (2026-10-15):** brittanychiang.com (sticky identity column while content scrolls), rauno.me
+(indented statement lines, one bold flat signal colour), leerob.com and emilkowal.ski (restraint: short copy,
+motion mostly on interaction).
 
 ## Reading order
 
-1. Monogram, name, role, availability status
-2. **View resume** (sun-yellow pill in dark mode, violet with a yellow arrow circle in light mode; opens `/resume/`) + Email (glass pill)
-3. Featured project
+1. Monogram, name (second line indented, muted), role, availability status
+2. **View resume** (portfolio-style outline button with a travelling yellow border; opens `/resume/`) + Email (plain outline)
+3. Featured project sheet
 4. Link groups: Work, then Elsewhere
-5. Tools: copy email, QR code, colour mode, pause motion (a quiet toolbar of borderless buttons; hover brings the glass back)
+5. Tools: copy email, QR code, colour mode, pause motion (a quiet toolbar of borderless buttons)
+6. Skills strip across the bottom (from the portfolio's About section and Revlens AI's stack)
 
-The **≥ 1024 px** layout is two columns: identity and actions on the left, content on the right, with the toolbar
-pinned to the bottom of the left column, level with the last link. Below that, it's a single column.
+The **≥ 1024 px** layout is two columns: a sticky identity sheet on the left with the toolbar at the bottom of
+that column, content on the right, the skills strip full width below. Below that, it's a single column.
 On a 390 × 844 phone, the resume button sits in the first viewport.
 
 ## Tokens
 
 | Token | Dark | Light | Role |
 |---|---|---|---|
-| `--bg` | `#06050d` | `#f7f6fc` | page (midnight) |
-| `--surface` | `#0f0d1a` | `#ffffff` | glass panels (rendered at ~80% over the aurora) |
-| `--raised` | `#191627` | `#efecf8` | icon tiles |
-| `--border` | `#262138` | `#d9d4ea` | decorative hairlines |
-| `--text` | `#f5f3ff` | `#0d0a1a` | body |
-| `--muted` | `#a9a3c2` | `#57516e` | secondary text |
-| `--accent` | `#a78bfa` | `#6d28d9` | violet, text-safe: labels, readouts, hover, spotlight |
-| `--accent-2` | `#7c3aed` | `#8b5cf6` | deep violet: aurora, gradients (decorative only) |
-| `--sun` | `#facc15` | `#facc15` | aurora glint, monogram tip, hairline end (decorative) |
-| `--cta` / `--on-cta` | `#6d28d9` / `#ffffff` | `#6d28d9` / `#ffffff` | primary action ("Violet Core": violet with a bevel gradient) |
-| `--nub` / `--on-nub` | 14% white / `#facc15` | 14% white / `#facc15` | arrow circle inside the primary action (yellow arrow) |
-| `--focus` | `#facc15` | `#6d28d9` | focus ring (yellow fails 3:1 on light, so light uses violet) |
-| `--status` | `#facc15` | `#a16207` | availability dot (always with text) |
+| `--bg` | `#0b0b0c` | `#f4f4f2` | page (graphite / bone) |
+| `--surface` | `#111113` | `#ffffff` | sheets, link rows, button fills |
+| `--raised` | `#18181b` | `#ecece8` | pressed/selected fills |
+| `--border` | `#2a2a2e` | `#dcdcd8` | sheet and row borders |
+| `--text` | `#ededed` | `#111111` | body |
+| `--muted` | `#9b9b9f` | `#55555a` | secondary text, second name line |
+| `--accent` | `#f5b942` | `#8a5a00` | signal, text-safe: labels, readouts, trace |
+| `--cta` / `--on-cta` | `#f5b942` / `#0b0b0c` | `#111111` / `#f4f4f2` | skip link, viewer primary button |
+| `--wipe` / `--on-wipe` | `#f5b942` / `#0b0b0c` | same | link-row hover fill and its text |
+| `--focus` | `#f5b942` | `#8a5a00` | focus ring |
+| `--status` | `#f5b942` | `#8a5a00` | availability dot (always with text) |
+| `--dot` | `237 237 237` | `17 17 17` | RGB of the network's nodes and links |
 
-The end-to-end suite checks contrast from the built site, in both modes: text, muted, on-cta/cta, focus/bg, focus/surface,
-accent/bg, accent/surface, status/surface and muted/raised.
+The end-to-end suite checks contrast from the built site, in both modes: text, muted, on-cta/cta, on-wipe/wipe,
+focus/bg, focus/surface, accent/bg, accent/surface, status/surface and muted/raised.
 
 ## Resume viewer (`/resume/`)
 
 - PDF.js 6.4 renders the live `https://abhinesh.codes/resume.pdf` (CORS `*`) into canvases inside a custom viewer.
   It's lazy-loaded on that route only: the library is ~135 KB gzip and the worker ~376 KB gzip.
 - **Chrome:** industrial "telemetry" language (from the industrial-brutalist skill, applied only here): mono uppercase
-  readouts, a `[ RESUME.PDF ]` bracketed title, and `PG 01 / 02`. It keeps the site's pills and glass rather than
-  that skill's square corners.
+  readouts, a `[ RESUME.PDF ]` bracketed title, and `PG 01 / 02`. It uses the site's flat sheets and 8 px buttons
+  rather than that skill's square corners.
 - **States:** loading (skeleton pages), error (`[ ERR ]` panel with an Open the PDF link and Try again), ready.
 - **Controls:** zoom out/in/fit (also the `-` `+` `0` keys), a Download button that saves a real file (blob from the loaded
   bytes), back to links, and Open the original PDF.
@@ -73,37 +80,39 @@ accent/bg, accent/surface, status/surface and muted/raised.
 
 ## Type, space, shape
 
-- Scale (tokens `--fs-xs` to `--fs-display`): 12 / 14 / 16 / 18 / 22 / clamp(40-56) px. Mono text (handles,
-  stack, kicker, readouts) is 12. Display weight 800 with tight tracking. A test fails if the page renders more
-  than six sizes or one outside the scale.
+- Scale (tokens `--fs-xs` to `--fs-display`): 12 / 14 / 16 / 18 / 22 / clamp(44-72) px. Mono text (handles,
+  stack, kicker, status, buttons' labels) is 12-14. Display weight 800 with tight tracking. A test fails if the
+  page renders more than six sizes or one outside the scale.
 - Space: 4 / 8 / 12 / 16 / 20 / 24 / 32 / 48 / 64 px.
-- Shape rule: actions are full pills, cards use 24 px radius (a 6 px bezel shell around 18 px inner), and link rows and icon tiles use 16 / 12 px.
+- Shape rule: sheets 14 px radius, link rows 10 px, buttons 6-8 px (the portfolio's button radius). No pills.
 
 ## Motion
 
-- **The identity column never animates in:** the name, status and resume button are visible on the first frame.
-  The right column rises 14 px over 0.7 s (50 ms stagger) with no opacity change and no blur. Why: on a cold
-  browser start the animation clock stalled for 1-3 s; opacity-0 entrances left the page blank, and the later
-  35%-opacity start held the featured project and every link at 35% for 2-3 s in a fresh Chromium (measured
-  2026-10-14). The fill mode is `backwards`, so the finished entrance releases `transform` for the tilt.
-- **Tilt (3D card, from the aceternity and 3d-web-experience skills, CSS only):** the featured card turns toward the
-  pointer by up to 5 deg (perspective 1000 px) and its title, stack and links shift 2-5 px with it; the AG tile
-  turns up to 8 deg. `components/Spotlight.tsx` feeds `--tx/--ty` from the same batched pointer listener. Fine
-  pointers only; off under reduced motion and Pause.
-- **Monogram loop (7 s):** the original draw-in, repeated. Both letters draw together over 1.6 s at one pen speed
-  (dash lengths 140 and 160 in user units), hold about 3.8 s fully drawn with a sheen at 1.4 s, erase over 1 s from
-  the start of each stroke, a 0.4 s beat, then redraw. The strokes are fully drawn in the HTML; the loop class is
-  added only once the animation clock is running (two frames fired, `document.timeline` advanced), so a stalled
-  clock shows the finished mark, never an empty tile. Reduced motion skips it; the Pause control stops it fully
-  drawn (CSS, so it follows toggles both ways). `data-draw` on the SVG records the decision for tests.
-- **Aurora:** one violet field drifts (transform only, about 26 s); the indigo field and the yellow glint are static.
-  The grain uses no blend mode.
-- **Resume button glint:** a rotating conic layer clipped to the pill (a transform animation, so it runs on the compositor).
-- **Spotlight:** a fixed-size glow moved with transform, updated once per animation frame, on fine pointers only.
-- **Measured** with Chromium at 4× CPU throttle, idle animation plus pointer movement: 11 fps before the
-  2026-10-12 optimisation pass, about 45 fps after; about 58 fps with all decoration off.
-- Hover: link rows slide 4 px, and arrows nudge up and to the right. Easing is `cubic-bezier(.32,.72,0,1)`.
-- **Pause control** (WCAG 2.2.2) stops the aurora; the choice is saved. `prefers-reduced-motion` stops everything.
+Every entrance only MOVES (no opacity, no masks): on a cold browser start the animation clock stalled for 1-3 s,
+and fading or clipped entrances left the page blank or faint. Fill mode is `backwards`, so a finished entrance
+releases `transform` for the tilt and magnet. A test fails if any entrance keyframe animates opacity.
+
+- **Kinetic name:** each letter rises 0.32 em with a 4 deg turn, 28 ms apart; the surname line is indented and muted.
+- **Sheets:** the identity and featured sheets settle with a spring (`cubic-bezier(.34,1.4,.5,1)`, 24 px, -1 deg);
+  link rows rise 16 px in a 55 ms stagger.
+- **Network background:** about 90 nodes (56 on phones) in a turning volume (one turn about every 105 s), links
+  found once (rotation keeps distances), six yellow signals hopping node to node. Starts only once the animation
+  clock runs; still frame under reduced motion, Pause, or a hidden tab. `data-field` records still/running.
+- **Featured sheet:** tilts toward the pointer (up to 5 deg) with its title, stack and links shifting 2-5 px; a short
+  yellow run traces its border on hover or keyboard focus.
+- **View resume:** the portfolio's outline button with a yellow segment travelling round the 1 px border every 4 s
+  (a rotating conic layer, compositor-only), a 2 px lift on hover, and a magnetic lean (up to 8 / 6 px) toward a
+  nearby pointer.
+- **Link rows:** a sun-yellow wipe sweeps in from the left on hover or keyboard focus; the name slides 6 px and the
+  arrow turns 45 deg.
+- **Monogram loop (7 s):** both letters draw together over 1.6 s at one pen speed (dash lengths 140 and 160), hold
+  about 3.8 s, erase over 1 s, a 0.4 s beat, redraw. Fully drawn in the HTML; the loop class is added only once the
+  clock runs. `data-draw` records the decision for tests.
+- **Skills strip:** a 32 s marquee; screen readers get the list once.
+- **Pause control** (WCAG 2.2.2) stops the network, the strip, the border glint, the trace, the monogram loop, the
+  tilt and the magnet; the choice is saved. `prefers-reduced-motion` stops everything.
+- **Measured** (Chromium, 4x CPU throttle, pointer moving, lab): about 53 fps with everything running, 60 paused
+  (Aurora Glass measured about 45 the same way).
 
 ## Decisions log
 
@@ -130,3 +139,7 @@ accent/bg, accent/surface, status/surface and muted/raised.
   landing pages, not a one-screen link hub): AIDA sections, bento grids, GSAP scroll effects, stock imagery,
   a floating nav, eyebrow tags, very large section padding, and a font change (the font matches the portfolio).
   Offered but not chosen: a screenshot thumbnail on the featured card.
+- 2026-10-15: Redesign to **Signal** (see Theme). Removed: aurora and grain, glass panels and gradient hairlines,
+  cursor spotlight glow, the violet bevel button, the gradient status chip, link icon tiles, the monogram's tile,
+  gradient and sheen. Font changed from Plus Jakarta Sans to Geist. Favicon and OG image redrawn to match.
+  "Neuron linkage" was read as a neural network of linked nodes (it echoes the portfolio's constellation).

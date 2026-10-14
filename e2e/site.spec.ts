@@ -33,6 +33,17 @@ function collectErrors(page: Page) {
 
 const resume = (page: Page) => page.getByRole("link", { name: "View resume" });
 
+// Entrances hold their start offset while a fresh browser's animation clock is stalled (by design: readable, a
+// few px off), so measurements of final positions and transforms wait for every finite animation to finish.
+const animationsDone = (page: Page) =>
+  page.evaluate(() =>
+    Promise.all(
+      document.getAnimations()
+        .filter((a) => a.effect?.getComputedTiming().iterations !== Infinity)
+        .map((a) => a.finished),
+    ),
+  );
+
 for (const vp of viewports)
   for (const scheme of ["light", "dark"] as const) {
     test(`home ${vp.name} ${scheme}: resume above the fold, no overflow, no errors`, async ({ page }, info) => {
@@ -94,11 +105,12 @@ for (const scheme of ["light", "dark"] as const) {
         ["--muted", "--bg", 4.5],
         ["--muted", "--surface", 4.5],
         ["--text", "--raised", 4.5],
-        ["--on-cta", "--cta", 4.5], // resume button label
+        ["--on-cta", "--cta", 4.5], // skip link and the viewer's primary button
+        ["--on-wipe", "--wipe", 4.5], // link row text on the sun-yellow hover fill
         ["--focus", "--bg", 3], // focus ring
         ["--focus", "--surface", 3],
-        ["--accent", "--bg", 4.5], // violet labels and readouts
-        ["--accent", "--surface", 4.5], // the "// featured project" label is accent text on a panel
+        ["--accent", "--bg", 4.5], // signal labels and readouts
+        ["--accent", "--surface", 4.5], // the "// featured project" label is accent text on a sheet
         ["--status", "--surface", 3], // availability dot (paired with text)
         ["--muted", "--raised", 4.5],
       ];
@@ -133,41 +145,56 @@ test("favicon and apple-touch-icon exist and match their declared format", async
   expect(ogRes.status()).toBe(200);
 });
 
+const field = (page: Page) => page.getByTestId("field");
+
 test("reduced motion: nothing animates and the pause button is hidden", async ({ page }) => {
   await openIn(page, { reducedMotion: "reduce" });
   const names = await page.evaluate(() =>
-    [".aurora span", ".content .rise", ".mark .sheen", ".dot"].map((s) => getComputedStyle(document.querySelector(s)!).animationName),
+    [".name .ch", ".sheet", ".links .rise", ".dot", ".ticker .run", ".trace rect"].map(
+      (s) => getComputedStyle(document.querySelector(s)!).animationName,
+    ),
   );
-  expect(names).toEqual(["none", "none", "none", "none"]);
+  expect(names).toEqual(["none", "none", "none", "none", "none", "none"]);
   await expect(page.locator(".mark[data-draw]")).toHaveAttribute("data-draw", "skip-motion"); // no draw loop either
+  await expect(field(page)).toHaveAttribute("data-field", "still"); // the network is drawn once, not animated
   await expect(page.getByRole("button", { name: "Pause background animation" })).toBeHidden();
   await expect(resume(page)).toBeVisible();
 });
 
-test("pause button stops the aurora and the choice persists", async ({ page }) => {
+test("pause button stops the network and the skills strip, and the choice persists", async ({ page }) => {
   await openIn(page, { reducedMotion: "no-preference" });
-  const aurora = page.locator(".aurora span").first();
+  const ticker = page.locator(".ticker .run");
   const pause = page.getByRole("button", { name: "Pause background animation" });
   await expect(pause).toHaveAttribute("aria-pressed", "false");
-  await expect(aurora).toHaveCSS("animation-play-state", "running");
+  await expect(field(page)).toHaveAttribute("data-field", "running", { timeout: 8_000 });
+  await expect(ticker).toHaveCSS("animation-play-state", "running");
   await pause.click();
   await expect(pause).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator("html")).toHaveAttribute("data-motion", "paused");
-  await expect(aurora).toHaveCSS("animation-play-state", "paused");
+  await expect(field(page)).toHaveAttribute("data-field", "still");
+  await expect(ticker).toHaveCSS("animation-play-state", "paused");
   await page.reload();
   await expect(page.getByRole("button", { name: "Pause background animation" })).toHaveAttribute("aria-pressed", "true");
+  await expect(field(page)).toHaveAttribute("data-field", "still");
   await page.getByRole("button", { name: "Pause background animation" }).click();
   await expect(page.locator("html")).not.toHaveAttribute("data-motion", /.*/);
+  await expect(field(page)).toHaveAttribute("data-field", "running");
 });
 
-test("hero content is fully visible immediately, without waiting for any animation", async ({ page }) => {
+test("hero content is fully visible immediately: entrances move, never fade or clip", async ({ page }) => {
   // Regression: a cold browser start stalled the animation clock 1-3 s, and opacity-0 entrances left the page
-  // blank. The identity column must not animate in at all.
+  // blank. Every entrance may only move: no opacity in any keyframes, and the name's letters are never masked.
   await openIn(page, { reducedMotion: "no-preference" });
   for (const sel of [".name", ".role", ".status", ".cta"]) {
-    const s = await page.locator(sel).evaluate((el) => ({ op: getComputedStyle(el).opacity, anim: getComputedStyle(el).animationName }));
-    expect(s, sel).toEqual({ op: "1", anim: "none" });
+    expect(await page.locator(sel).evaluate((el) => getComputedStyle(el).opacity), sel).toBe("1");
   }
+  const fades = await page.evaluate(() =>
+    document.getAnimations()
+      .filter((a) => (a.effect as KeyframeEffect).getKeyframes().some((k) => "opacity" in k))
+      .map((a) => (a as CSSAnimation).animationName),
+  );
+  expect(fades.filter((n) => n !== "ping")).toEqual([]); // only the status dot's decorative ping ring fades
+  expect(await page.locator(".name .line").first().evaluate((el) => getComputedStyle(el).overflow)).toBe("visible");
 });
 
 // Records whether the monogram's loop class was ever added, from the first moment of each load.
@@ -252,13 +279,37 @@ test("desktop: identity and content sit side by side, resume above the fold", as
   await expect(page.getByRole("link", { name: /GitHub/ })).toBeInViewport();
 });
 
-test("every profile link has an icon, monogram has a name", async ({ page }) => {
+test("every profile link shows its name and handle, monogram has a name", async ({ page }) => {
   await page.goto("/");
   const links = page.locator("#links a.link");
   await expect(links).toHaveCount(6);
   await expect(page.getByRole("link", { name: /LeetCode/ })).toHaveAttribute("href", "https://leetcode.com/u/Abhinesh-exe/");
-  for (const link of await links.all()) await expect(link.locator(".tile svg")).toHaveCount(1);
+  for (const link of await links.all()) {
+    await expect(link.locator(".lname")).not.toBeEmpty();
+    await expect(link.locator(".handle")).not.toBeEmpty();
+  }
   await expect(page.getByRole("img", { name: "AG monogram" })).toBeVisible();
+});
+
+test("skills strip: read once as a list, moving copies hidden from assistive tech", async ({ page }) => {
+  await page.goto("/");
+  const list = page.getByRole("list", { name: "Skills" });
+  await expect(list.getByRole("listitem")).toHaveCount(8);
+  await expect(list).toContainText("Applied NLP");
+  await expect(page.locator('.ticker ul[aria-hidden="true"]')).toHaveCount(3);
+});
+
+test("network background starts with a running clock and stays still when the clock is stalled", async ({ page }) => {
+  await openIn(page, { reducedMotion: "no-preference" });
+  await expect(field(page)).toHaveAttribute("aria-hidden", "true");
+  await expect(field(page)).toHaveAttribute("data-field", "running", { timeout: 8_000 });
+  // Cold start: with the document timeline stuck at 0 the network never starts its loop (one still frame).
+  await page.addInitScript(() =>
+    Object.defineProperty(DocumentTimeline.prototype, "currentTime", { get: () => 0, configurable: true }),
+  );
+  await page.reload();
+  await expect(page.locator(".mark[data-draw]")).toHaveAttribute("data-draw", "skip-clock", { timeout: 8_000 });
+  await expect(field(page)).toHaveAttribute("data-field", "still");
 });
 
 test("colour mode toggle overrides the system and persists", async ({ page }) => {
@@ -267,12 +318,12 @@ test("colour mode toggle overrides the system and persists", async ({ page }) =>
   await expect(group.getByRole("button", { name: "System" })).toHaveAttribute("aria-pressed", "true");
   await group.getByRole("button", { name: "Dark" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(6, 5, 13)");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(11, 11, 12)");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(page.getByRole("group", { name: "Colour mode" }).getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("group", { name: "Colour mode" }).getByRole("button", { name: "System" }).click();
-  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(247, 246, 252)");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(244, 244, 242)");
 });
 
 test("copy email: success message", async ({ page, context }, info) => {
@@ -331,11 +382,14 @@ test("keyboard: skip link first, then reaches every link", async ({ page }, info
   expect(seen.size).toBeGreaterThanOrEqual(links - 1);
 });
 
-test("moving border on the resume button runs, pauses, and stops for reduced motion", async ({ page }) => {
+test("View resume's travelling border runs, pauses, and stops for reduced motion", async ({ page }) => {
   await openIn(page, { reducedMotion: "no-preference" });
   const ring = (prop: "animationName" | "animationPlayState") =>
     page.locator(".cta").evaluate((el, p) => getComputedStyle(el, "::before")[p], prop);
-  expect(await ring("animationName")).toBe("orbit-border");
+  expect(await ring("animationName")).toBe("orbit");
+  // Matches the portfolio's Download Resume button: mono label with a file icon.
+  expect(await page.locator(".cta").evaluate((el) => getComputedStyle(el).fontFamily)).toMatch(/JetBrains Mono/);
+  await expect(page.locator(".cta svg")).toHaveCount(1);
   // Regression: the ring once painted over the button fill (isolation + negative z-index). The fill must be its
   // own layer above the ring, so the label always sits on a solid colour.
   const layers = await page.locator(".cta").evaluate((el) => ({
@@ -352,37 +406,36 @@ test("moving border on the resume button runs, pauses, and stops for reduced mot
   expect(await ring("animationName")).toBe("none");
 });
 
-test("status chip: real text immediately, gradient hairline, dot hidden from assistive tech", async ({ page }) => {
+test("status: real text immediately, dot hidden from assistive tech", async ({ page }) => {
   await openIn(page, { reducedMotion: "no-preference" });
   const status = page.locator(".status");
   await expect(status).toHaveText("Open to SWE or ML internships");
   await expect(status.locator(".dot")).toHaveAttribute("aria-hidden", "true");
-  const hairline = await status.evaluate((el) => getComputedStyle(el, "::after").backgroundImage);
-  expect(hairline).toContain("linear-gradient");
 });
 
-test("spotlight follows the pointer over a link", async ({ page }) => {
+test("link rows: sun-yellow wipe on hover and on keyboard focus, text stays readable on it", async ({ page }) => {
   await openIn(page, { colorScheme: "dark", reducedMotion: "no-preference" });
   const link = page.getByRole("link", { name: /GitHub/ });
-  const box = (await link.boundingBox())!;
-  await page.mouse.move(box.x + 30, box.y + 20);
-  await page.mouse.move(box.x + 60, box.y + 25);
-  await expect.poll(() => link.evaluate((el) => (el as HTMLElement).style.getPropertyValue("--mx"))).toMatch(/^\d+(\.\d+)?px$/);
-  await expect.poll(() => link.evaluate((el) => getComputedStyle(el, "::before").opacity)).toBe("1");
+  const wipe = () => link.evaluate((el) => getComputedStyle(el, "::before").transform);
+  expect(await wipe()).toMatch(/^matrix\(0, /); // scaleX(0) at rest
+  await link.hover();
+  await expect.poll(wipe).toBe("matrix(1, 0, 0, 1, 0, 0)");
+  await expect(link).toHaveCSS("color", "rgb(11, 11, 12)"); // --on-wipe on the yellow fill
 });
 
-test("right column is readable from the first frame: its entrance never animates opacity", async ({ page }) => {
-  // Regression: the entrance started at 35% opacity, and in a fresh Chromium the stalled animation clock held the
-  // featured project and every link there for 2-3 s. The keyframes may move the column, never fade it.
-  await openIn(page, { reducedMotion: "no-preference" });
-  const rises = await page.locator(".content .rise, .foot.rise").evaluateAll((els) =>
-    els.map((el) => ({
-      opacity: getComputedStyle(el).opacity,
-      fades: el.getAnimations().some((a) => (a.effect as KeyframeEffect).getKeyframes().some((k) => "opacity" in k)),
-    })),
-  );
-  expect(rises.length).toBeGreaterThan(2);
-  for (const r of rises) expect(r).toEqual({ opacity: "1", fades: false });
+test("View resume leans toward a nearby pointer and Pause turns that off", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openIn(page, { colorScheme: "dark", reducedMotion: "no-preference" });
+  await animationsDone(page);
+  const cta = page.locator(".cta");
+  const box = (await cta.boundingBox())!;
+  await page.mouse.move(box.x + box.width + 20, box.y + box.height / 2 + 10);
+  await page.mouse.move(box.x + box.width + 25, box.y + box.height / 2 + 12);
+  await expect.poll(() => cta.evaluate((el) => (el as HTMLElement).style.getPropertyValue("--mx"))).toMatch(/^[1-8](\.\d)?px$/);
+  await expect.poll(() => cta.evaluate((el) => getComputedStyle(el).transform)).not.toBe("none");
+  await page.getByRole("button", { name: "Pause background animation" }).click();
+  await page.mouse.move(box.x + box.width + 20, box.y + box.height / 2 + 10);
+  await expect.poll(() => cta.evaluate((el) => getComputedStyle(el).transform)).toBe("none");
 });
 
 test("type uses one scale: at most six distinct font sizes on the page", async ({ page }) => {
@@ -397,20 +450,13 @@ test("type uses one scale: at most six distinct font sizes on the page", async (
     return [...set].map(parseFloat).sort((a, b) => a - b);
   });
   expect(sizes.length, `sizes: ${sizes.join(", ")}`).toBeLessThanOrEqual(6);
-  for (const s of sizes) expect([12, 14, 16, 18, 22, 56], `unexpected ${s}px`).toContain(s);
+  for (const s of sizes) expect([12, 14, 16, 18, 22, 72], `unexpected ${s}px`).toContain(s);
 });
-
-// The entrance holds its start offset while a fresh browser's animation clock is stalled (by design: readable,
-// just 14px low), so measurements of final positions and transforms wait for it to finish.
-const riseDone = (page: Page) =>
-  page.evaluate(() =>
-    Promise.all(document.getAnimations().filter((a) => (a as CSSAnimation).animationName === "rise").map((a) => a.finished)),
-  );
 
 test("desktop: the toolbar ends level with the last link, not under the resume button", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
-  await riseDone(page);
+  await animationsDone(page);
   const foot = (await page.locator(".foot").boundingBox())!;
   const links = (await page.locator("#links").boundingBox())!;
   const ctas = (await page.locator(".ctas").boundingBox())!;
@@ -431,7 +477,7 @@ test("featured card tilts toward the pointer, settles when it leaves, and Pause 
   await openIn(page, { colorScheme: "dark", reducedMotion: "no-preference" });
   const shell = page.locator(".shell");
   const transform = () => shell.evaluate((el) => getComputedStyle(el).transform);
-  await riseDone(page);
+  await animationsDone(page);
   const box = (await shell.boundingBox())!;
   expect(flat(await transform())).toBe(true);
   await page.mouse.move(box.x + 30, box.y + 20);
@@ -455,5 +501,5 @@ test("content: https links, valid Person JSON-LD, decorative background hidden f
   const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
   expect(ld["@type"]).toBe("Person");
   expect(ld.sameAs).toHaveLength(6);
-  await expect(page.getByTestId("aurora")).toHaveAttribute("aria-hidden", "true");
+  await expect(page.getByTestId("field")).toHaveAttribute("aria-hidden", "true");
 });

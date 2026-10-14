@@ -1,88 +1,80 @@
 /* ---------- tokens (see design.md) ---------- */
+/* "Signal" (chosen 2026-10-15 as a mix of three motion previews): graphite + one sun-yellow signal.
+   --accent   text-safe signal colour (labels, focus, trace).   --cta/--on-cta  the View resume button.
+   --wipe     link-row hover fill (sun yellow in both modes).    --dot  RGB of the background field's dots.
+   --status   availability dot (always beside text).             --focus  focus ring (3:1 on --bg). */
 :root {
   color-scheme: light;
-  /* Palette: midnight black + electric violet + a shot of sun yellow (design.md).
-     --accent  violet, text-safe: labels, hover, spotlight.  --accent-2  deep violet: decoration only.
-     --sun     yellow: aurora glint, monogram tip.           --cta/--nub  primary action per mode.
-     --focus   focus ring (must reach 3:1 on --bg).         --status  availability dot (with text). */
-  --bg: #f7f6fc;
+  --bg: #f4f4f2;
   --surface: #ffffff;
-  --raised: #efecf8;
-  --border: #d9d4ea;
-  --text: #0d0a1a;
-  --muted: #57516e;
-  --accent: #6d28d9;
-  --accent-2: #8b5cf6;
-  --sun: #facc15;
-  --cta: #6d28d9;
-  --on-cta: #ffffff;
-  --nub: rgb(255 255 255 / 0.14);
-  --on-nub: #facc15;
-  --focus: #6d28d9;
-  --status: #a16207;
-  --aurora-opacity: 0.4;
-  --glass: color-mix(in srgb, var(--surface) 78%, transparent);
+  --raised: #ecece8;
+  --border: #dcdcd8;
+  --text: #111111;
+  --muted: #55555a;
+  --accent: #8a5a00;
+  --cta: #111111;
+  --on-cta: #f4f4f2;
+  --wipe: #f5b942;
+  --on-wipe: #0b0b0c;
+  --focus: #8a5a00;
+  --status: #8a5a00;
+  --dot: 17 17 17;
+  --shadow: 0 1px 0 rgb(17 17 17 / 0.05), 0 22px 48px -24px rgb(17 17 17 / 0.28);
+  --glass: var(--surface);
 
-  --font-sans: var(--font-jakarta), system-ui, sans-serif;
+  --font-sans: var(--font-geist), system-ui, sans-serif;
   --font-code: var(--font-mono), ui-monospace, monospace;
   --ease: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+  --spring: cubic-bezier(0.34, 1.4, 0.5, 1);
 
-  /* Type scale: six steps (was nine sizes, with 13 / 13.5 / 14 px nearly indistinguishable). Mono text is xs. */
+  /* Type scale: six steps. Mono text is xs. */
   --fs-xs: 12px;
   --fs-sm: 14px;
   --fs-md: 16px;
   --fs-lg: 18px;
   --fs-xl: 22px;
-  --fs-display: clamp(40px, 10vw, 56px);
+  --fs-display: clamp(44px, 11vw, 72px);
 
-  --r-pill: 999px;
-  --r-card: 24px;
-  --r-row: 16px;
-  --r-tile: 12px;
+  --r-card: 14px;
+  --r-row: 10px;
+  --r-btn: 8px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #06050d;
-    --surface: #0f0d1a;
-    --raised: #191627;
-    --border: #262138;
-    --text: #f5f3ff;
-    --muted: #a9a3c2;
-    --accent: #a78bfa;
-    --accent-2: #7c3aed;
-    --sun: #facc15;
-    --cta: #6d28d9;
-    --on-cta: #ffffff;
-    --nub: rgb(255 255 255 / 0.14);
-    --on-nub: #facc15;
-    --focus: #facc15;
-    --status: #facc15;
-    --aurora-opacity: 0.6;
-    --glass: color-mix(in srgb, var(--surface) 80%, transparent);
+    --bg: #0b0b0c;
+    --surface: #111113;
+    --raised: #18181b;
+    --border: #2a2a2e;
+    --text: #ededed;
+    --muted: #9b9b9f;
+    --accent: #f5b942;
+    --cta: #f5b942;
+    --on-cta: #0b0b0c;
+    --focus: #f5b942;
+    --status: #f5b942;
+    --dot: 237 237 237;
+    --shadow: 0 1px 0 rgb(255 255 255 / 0.04), 0 22px 48px -24px rgb(0 0 0 / 0.9);
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #06050d;
-  --surface: #0f0d1a;
-  --raised: #191627;
-  --border: #262138;
-  --text: #f5f3ff;
-  --muted: #a9a3c2;
-  --accent: #a78bfa;
-  --accent-2: #7c3aed;
-  --sun: #facc15;
-  --cta: #6d28d9;
-  --on-cta: #ffffff;
-  --nub: rgb(255 255 255 / 0.14);
-  --on-nub: #facc15;
-  --focus: #facc15;
-  --status: #facc15;
-  --aurora-opacity: 0.6;
-  --glass: color-mix(in srgb, var(--surface) 80%, transparent);
+  --bg: #0b0b0c;
+  --surface: #111113;
+  --raised: #18181b;
+  --border: #2a2a2e;
+  --text: #ededed;
+  --muted: #9b9b9f;
+  --accent: #f5b942;
+  --cta: #f5b942;
+  --on-cta: #0b0b0c;
+  --focus: #f5b942;
+  --status: #f5b942;
+  --dot: 237 237 237;
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.04), 0 22px 48px -24px rgb(0 0 0 / 0.9);
 }
 
 /* ---------- base ---------- */
@@ -97,392 +89,317 @@ body {
   font-size: var(--fs-md);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 a { color: inherit; }
-::selection { background: color-mix(in srgb, var(--accent-2) 45%, transparent); }
-:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+::selection { background: var(--wipe); color: var(--on-wipe); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 .skip {
   position: absolute; left: 16px; top: -100px; z-index: 3;
-  padding: 12px 16px; border-radius: var(--r-pill);
+  padding: 12px 16px; border-radius: var(--r-btn);
   background: var(--cta); color: var(--on-cta); font-weight: 600; text-decoration: none;
 }
 .skip:focus-visible { top: 16px; }
 
-/* ---------- background: aurora + grain (fixed, decorative) ---------- */
-/* Layers: 0 = aurora/grain, 1 = content, 2 = dialog backdrop handled by the browser, 3 = skip link. */
-/* Perf (measured 2026-10-12, CPU 4x throttle): only the two big violet fields drift (transform only, on the
-   compositor); the small yellow glint is static; grain has NO blend mode (mix-blend-mode over an animated
-   layer re-blended the whole screen every frame and was the single biggest frame-rate cost). */
-.aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; opacity: var(--aurora-opacity); contain: strict; }
-.aurora span {
-  position: absolute; width: 64vmax; aspect-ratio: 1; border-radius: 50%;
-}
-/* The one moving layer (measured: animating one smaller field instead of two large ones took the throttled
-   frame rate from ~32 to ~50 fps; the scene still reads as alive). */
-.aurora span:nth-child(1) {
-  left: -20vmax; top: -24vmax;
-  background: radial-gradient(circle, color-mix(in srgb, var(--accent-2) 75%, transparent), transparent 62%);
-  animation: drift-a 26s var(--ease) infinite alternate;
-  will-change: transform;
-}
-.aurora span:nth-child(2) {
-  right: -22vmax; top: 8vmax;
-  background: radial-gradient(circle, color-mix(in srgb, #4f46e5 55%, transparent), transparent 62%);
-}
-.aurora span:nth-child(3) {
-  left: 5vmax; bottom: -45vmax;
-  /* the "shot" of sun yellow: one small warm glint low on the page */
-  width: 42vmax; left: 30vmax; bottom: -22vmax;
-  background: radial-gradient(circle, color-mix(in srgb, var(--sun) 45%, transparent), transparent 62%);
-  opacity: 0.5;
-  will-change: auto;
-}
-@keyframes drift-a { to { transform: translate3d(14vmax, 16vmax, 0) scale(1.12); } }
-.grain {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.035;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-}
-:root[data-motion="paused"] .aurora span { animation-play-state: paused; }
+/* ---------- background: live dot field (components/Field.tsx), decorative ---------- */
+/* Layers: 0 = field, 1 = content, 3 = skip link. All text sits on solid panels or the solid page colour. */
+.field { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; }
 
 /* ---------- layout ---------- */
 .page {
   position: relative; z-index: 1;
-  max-width: 440px;
+  max-width: 460px;
   margin: 0 auto;
-  padding: 32px 16px 48px;
+  padding: 24px 16px 0;
 }
 .identity, .content, .foot { min-width: 0; }
-.content { margin-top: 32px; }
+.content { margin-top: 28px; }
 
-/* Desktop: identity + tools on the left, content on the right. DOM order stays identity, content, tools. */
+/* Desktop: identity sheet + toolbar on the left, content on the right, skills strip across the bottom.
+   DOM order stays identity, content, tools. */
 @media (min-width: 1024px) {
   .page {
-    max-width: 1080px;
-    padding: 72px 32px;
+    max-width: 1120px;
+    padding: 64px 32px 0;
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
     grid-template-areas: "identity content" "foot content";
     grid-template-rows: auto 1fr;
-    column-gap: 72px;
+    column-gap: 80px;
     align-items: start;
   }
-  .identity { grid-area: identity; }
-  .content { grid-area: content; margin-top: 8px; }
-  /* The toolbar sits at the bottom of the left column, level with the last link, instead of trailing the
-     resume button and leaving an empty block under it. */
+  /* Sticky identity (after brittanychiang.com): the name and actions stay in view while the content scrolls. */
+  .identity { grid-area: identity; position: sticky; top: 32px; }
+  .content { grid-area: content; margin-top: 0; }
+  /* Offset second line (after rauno.me's indented statement lines). */
+  .name .line + .line { margin-left: 0.5em; }
+  /* The toolbar sits at the bottom of the left column, level with the last link. */
   .foot { grid-area: foot; align-self: end; }
-  .foot .tools { margin-top: 32px; }
 }
 
-/* ---------- entrance (one sequence) ---------- */
-/* Content must never depend on the animation clock to be visible: on a cold browser start (e.g. a link opened
-   from a chat app) the document timeline was measured stuck at 0 for 1-3 s, which left an opacity-0 entrance
-   showing an empty page. So the identity column (name, status, resume button) renders instantly, and the
-   secondary column only moves: no opacity in the keyframes. Starting it at 35% opacity left the featured project
-   and every link at 35% for 2-3 s in a fresh Chromium (measured), which fails contrast. A short rise reads as
-   the same entrance and, if the clock stalls, leaves the text 14px low at full strength. Transform only. */
+/* ---------- motion: entrances ---------- */
+/* Content never depends on the animation clock to be visible: on a cold browser start the document timeline was
+   measured stuck at 0 for 1-3 s. So no entrance animates opacity or clips text: the name's letters, the sheets
+   and the rows only MOVE. If the clock stalls they sit a few px off, fully readable. Fill mode `backwards`
+   releases `transform` when done (the featured card's tilt needs it). */
 @media (prefers-reduced-motion: no-preference) {
-  /* backwards, not both: once it ends the animation must release `transform`, or it would pin the tilt below. */
-  .rise { animation: rise 0.7s var(--ease-out) backwards; animation-delay: calc(var(--i, 0) * 50ms); }
-  .identity .rise, .identity.rise { animation: none; }
-  @keyframes rise { from { transform: translateY(14px); } }
+  .name .ch { animation: letter 0.9s var(--ease-out) backwards; animation-delay: calc(0.2s + var(--c) * 28ms); }
+  @keyframes letter { from { transform: translateY(0.32em) rotate(4deg); } }
+  .role, .status { animation: rise 0.8s var(--ease-out) 0.55s backwards; }
+  .sheet { animation: settle 1s var(--spring) backwards; animation-delay: calc(var(--i, 0) * 90ms); }
+  @keyframes settle { from { transform: translateY(24px) rotate(-1deg); } }
+  .rise { animation: rise 0.8s var(--spring) backwards; animation-delay: calc(0.2s + var(--i, 0) * 55ms); }
+  @keyframes rise { from { transform: translateY(16px); } }
 }
 
-/* ---------- monogram ---------- */
-.mark { display: block; width: 96px; height: 80px; }
-.mark .mark-bg { fill: var(--glass); stroke: color-mix(in srgb, var(--text) 14%, transparent); }
-.mark .sheen { opacity: 0; }
-@media (prefers-reduced-motion: no-preference) {
-  /* Without the loop (clock stalled at start): one sheen after load, as before. */
-  .mark .sheen { animation: sheen 1.4s var(--ease) 1.4s both; }
-  .mark:hover .sheen { animation: sheen 1.1s var(--ease) both; }
-  @keyframes sheen { 0% { opacity: 0.0; transform: translateX(-120px); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateX(120px); } }
+/* ---------- identity sheet ---------- */
+.identity {
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+@media (min-width: 1024px) { .identity { padding: 36px; } }
 
-  /* Loop, 7 s per cycle, the original draw-in repeated: both letters draw together over 1.6 s at one pen speed
-     (dash lengths in user units, so the longer G takes the same time at a similar speed), hold, sheen at the
-     original moment (1.4 s after the first draw starts), erase over 1 s from the start of each stroke, a 0.4 s
-     beat, redraw. Monogram.tsx adds .looping only once the animation clock is running. Dash = gap = --len, so no
-     zero-length dash ever touches a path end (no round-cap dots). */
-  /* --back is the erased offset, spelled out: calc(var(--len) * -1) on a unitless number is invalid for
-     stroke-dashoffset in Chromium (NaN) and Firefox (dropped), so the erase never happened there. */
+/* ---------- monogram: plain stroke, the 7 s draw/hold/erase loop ---------- */
+.mark { display: block; width: 84px; height: 54px; color: var(--text); }
+.mark .strokes path { fill: none; stroke: currentColor; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+@media (prefers-reduced-motion: no-preference) {
+  /* Both letters draw together over 1.6 s at one pen speed (dash lengths in user units), hold, erase over 1 s
+     from the start of each stroke, a 0.4 s beat, redraw. Monogram.tsx adds .looping only once the animation
+     clock is running. Dash = gap = --len, so no zero-length dash touches a path end (no round-cap dots).
+     --back is spelled out: calc(var(--len) * -1) on a unitless number is invalid for stroke-dashoffset in
+     Chromium (NaN) and Firefox (dropped). */
   .mark .strokes path:first-child { --len: 140; --back: -140; }
   .mark .strokes path:last-child { --len: 160; --back: -160; }
-  .mark.looping .strokes path {
-    stroke-dasharray: var(--len);
-    animation: ag-loop 7s 0.15s infinite both;
-  }
+  .mark.looping .strokes path { stroke-dasharray: var(--len); animation: ag-loop 7s 0.15s infinite both; }
   @keyframes ag-loop {
-    0% { stroke-dashoffset: var(--len); animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1); }
-    22.86%, 80% { stroke-dashoffset: 0; animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1); }
+    0% { stroke-dashoffset: var(--len); animation-timing-function: var(--ease-io); }
+    22.86%, 80% { stroke-dashoffset: 0; animation-timing-function: var(--ease-io); }
     94.29%, 100% { stroke-dashoffset: var(--back); }
-  }
-  /* No separate hover sweep while looping: restarting the sheen on hover would put it out of step with the draw. */
-  .mark.looping .sheen { animation: ag-sheen-loop 7s 0.15s infinite both; }
-  @keyframes ag-sheen-loop {
-    0%, 17.86% { opacity: 0; transform: translateX(-120px); animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1); }
-    23.86% { opacity: 1; animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1); }
-    37.86%, 100% { opacity: 0; transform: translateX(120px); }
   }
   /* Pause control: stop the loop with the mark fully drawn (not frozen mid-erase). */
   :root[data-motion="paused"] .mark.looping .strokes path { animation: none; stroke-dasharray: none; }
-  :root[data-motion="paused"] .mark.looping .sheen { animation: none; }
 }
 
 /* ---------- identity ---------- */
 .name {
-  margin: 24px 0 8px;
+  margin: 28px 0 0;
   font-size: var(--fs-display);
-  line-height: 1.02;
+  line-height: 0.98;
   font-weight: 800;
   letter-spacing: -0.045em;
 }
-.role { margin: 0; max-width: 38ch; color: var(--muted); font-size: var(--fs-md); }
-/* Status "gradient chip" (chosen 2026-10-12 from 3 previews after two pill versions were rejected): glass pill
-   with the cards' violet-to-yellow hairline and the body font, so it belongs to the same family as the link rows. */
+.name .line { display: block; }
+.name .line + .line { color: var(--muted); }
+.name .ch { display: inline-block; }
+.role { margin: 20px 0 0; max-width: 40ch; color: var(--muted); font-size: var(--fs-md); line-height: 1.6; }
 .status {
-  position: relative;
   display: inline-flex; align-items: center; gap: 10px;
   margin: 16px 0 0;
-  padding: 8px 16px 8px 12px;
-  border-radius: var(--r-pill);
-  background: var(--glass);
   color: var(--text);
-  font: 500 var(--fs-sm)/1.3 var(--font-sans);
+  font: 400 var(--fs-xs)/1.3 var(--font-code);
 }
-.status::after {
-  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--accent-2) 80%, transparent), color-mix(in srgb, var(--sun) 60%, transparent));
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-}
-/* Scramble text keeps its width while glyphs change (mono font, no reflow). */
-.scramble { white-space: pre; }
-.dot { position: relative; width: 8px; height: 8px; flex: none; border-radius: 50%; background: var(--status);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--status) 16%, transparent); }
+.dot { position: relative; width: 8px; height: 8px; flex: none; border-radius: 50%; background: var(--status); }
 @media (prefers-reduced-motion: no-preference) {
-  .dot::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--status); animation: ping 2.4s var(--ease-out) infinite; }
-  @keyframes ping { from { transform: scale(0.6); opacity: 0.9; } to { transform: scale(1.8); opacity: 0; } }
+  .dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--status); animation: ping 2.4s var(--ease-out) infinite; }
+  @keyframes ping { from { transform: scale(1); opacity: 0.9; } to { transform: scale(3.2); opacity: 0; } }
   :root[data-motion="paused"] .dot::after { animation: none; opacity: 0; }
 }
 
 /* ---------- actions ---------- */
 .ctas { display: flex; gap: 10px; margin: 28px 0 0; }
-.cta {
-  flex: 1;
+.cta, .pill {
   min-height: 52px;
-  display: inline-flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 0 6px 0 22px;
-  border-radius: var(--r-pill);
-  background: var(--cta);
-  color: var(--on-cta);
-  font: 700 var(--fs-md)/1 var(--font-sans);
-  text-decoration: none;
-  box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--cta) 70%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.25);
-  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
-}
-.nub {
-  width: 40px; height: 40px; flex: none;
-  display: grid; place-items: center;
-  border-radius: 50%;
-  background: var(--nub);
-  color: var(--on-nub);
-  transition: transform 0.5s var(--ease);
-}
-.cta:hover .nub { transform: translate(2px, -2px) scale(1.06); }
-.cta:hover { box-shadow: 0 14px 36px -12px color-mix(in srgb, var(--cta) 85%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.25); }
-.cta:active, .pill:active { transform: scale(0.98); }
-
-/* Moving border (port of Aceternity UI's "Moving Border" concept, reimplemented in CSS: their version moves a
-   gradient dot along an SVG path with the `motion` library). Here a large square carrying a conic gradient
-   rotates behind the fill and is clipped to the pill, so only a 2px ring of it shows. Rotating with `transform`
-   keeps it on the compositor; the earlier animated @property angle restyled the button every frame. */
-/* "Violet Core" (chosen 2026-10-12): the button is the brand violet with a soft machined bevel; the sun-yellow
-   "shot" lives in the arrow; a lilac glint orbits the edge in both modes. */
-.cta { position: relative; isolation: isolate; overflow: hidden; --comet: #c4b5fd; }
-:root[data-theme="light"] .cta { --comet: #a78bfa; }
-@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .cta { --comet: #a78bfa; } }
-/* Layers inside the button's own stacking context (isolation: isolate paints negative z-index children ABOVE
-   the element's background, so the fill can't live on .cta itself): ring (-2) < solid fill (-1) < label. */
-.cta { background: color-mix(in srgb, var(--cta) 55%, #000); /* ring track, visible only as the 2px edge */ }
-.cta::before {
-  content: ""; position: absolute; z-index: -2; pointer-events: none;
-  left: 50%; top: 50%; width: 420px; height: 420px; margin: -210px 0 0 -210px; /* covers the pill's diagonal */
-  background: conic-gradient(transparent 0deg 250deg, var(--comet) 320deg, transparent 360deg);
-  will-change: transform;
-}
-.cta::after {
-  content: ""; position: absolute; inset: 2px; z-index: -1; border-radius: inherit; pointer-events: none;
-  background-color: var(--cta); /* solid base; the gradient below adds the bevel */
-  background-image: linear-gradient(180deg, #8b5cf6, var(--cta) 60%, #5b21b6);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.28), inset 0 -2px 0 rgb(0 0 0 / 0.25);
-}
-.nub { box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18); }
-.cta:active { transform: translateY(1px) scale(0.985); } /* tactile press (3D skill: depth, not WebGL) */
-@media (prefers-reduced-motion: no-preference) {
-  .cta::before { animation: orbit-border 3.2s linear infinite; }
-  @keyframes orbit-border { to { transform: rotate(360deg); } }
-  :root[data-motion="paused"] .cta::before { animation-play-state: paused; }
-}
-.pill {
-  min-height: 52px;
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 0 20px;
-  border-radius: var(--r-pill);
-  border: 1px solid var(--border);
-  background: var(--glass);
-  color: var(--text);
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 0 22px;
+  border-radius: var(--r-btn);
   font: 600 var(--fs-md)/1 var(--font-sans);
   text-decoration: none;
   cursor: pointer;
-  transition: transform 0.5s var(--ease), border-color 0.3s;
 }
-.pill:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
-.pill.small { min-height: 44px; padding: 0 16px; font-size: var(--fs-sm); font-weight: 500; }
-
-/* ---------- glass panels: gradient hairline + spotlight ---------- */
-.spot { position: relative; isolation: isolate; overflow: hidden; }
-.spot::before {
-  /* Cursor spotlight: a fixed-size glow MOVED with transform (--mx/--my from components/Spotlight.tsx, batched
-     per frame). Moving it repaints nothing; the old version re-rendered the gradient at a new position on
-     every pointer event. */
-  content: ""; position: absolute; left: 0; top: 0; width: 480px; height: 480px; z-index: -1; pointer-events: none;
-  border-radius: 50%;
-  transform: translate(calc(var(--mx, 50%) - 240px), calc(var(--my, 50%) - 240px));
-  opacity: 0; transition: opacity 0.4s var(--ease);
-  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 18%, transparent), transparent 50%);
+/* View resume, matched to the portfolio's "Download Resume" button (abhinesh.codes .btn-outline.btn-glow):
+   an outlined mono button with a file icon, a bright segment travelling round its 1 px border every 4 s, and a
+   2 px lift on hover. The portfolio animates an @property angle; here a conic layer ROTATES behind a 1 px-inset
+   fill (compositor-only), and the segment is the site's sun yellow instead of the portfolio's cyan/violet. */
+.cta {
+  flex: 1;
+  position: relative; isolation: isolate; overflow: hidden;
+  border-radius: 6px;
+  background: rgb(var(--dot) / 0.14); /* ring track: shows only as the 1 px edge */
+  color: var(--text);
+  font: 600 var(--fs-sm)/1 var(--font-code);
+  /* Magnetic (components/PointerFx.tsx sets --mx/--my while the pointer is near) plus the hover lift. */
+  transform: translate(var(--mx, 0px), calc(var(--my, 0px) - var(--lift, 0px)));
+  transition: transform 0.35s var(--ease);
+}
+.cta::before {
+  content: ""; position: absolute; z-index: -2; pointer-events: none;
+  left: 50%; top: 50%; width: 520px; height: 520px; margin: -260px 0 0 -260px; /* covers the button's diagonal */
+  background: conic-gradient(transparent 0deg 250deg, var(--wipe) 300deg, var(--text) 330deg, transparent 360deg);
   will-change: transform;
 }
-.spot:hover::before { opacity: 1; }
-.spot::after {
-  /* gradient hairline border (emerald to cyan), drawn with a masked 1px ring */
-  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; padding: 1px;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 70%, transparent), transparent 35%, transparent 70%, color-mix(in srgb, var(--sun) 45%, transparent));
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  opacity: 0.55;
-  transition: opacity 0.4s var(--ease);
+.cta::after {
+  content: ""; position: absolute; inset: 1px; z-index: -1; border-radius: 5px; pointer-events: none;
+  background: var(--surface); /* the identity sheet's colour, so the button reads as cut from it */
+  transition: background-color 0.2s var(--ease-out);
 }
-.spot:hover::after, .spot:focus-within::after { opacity: 1; }
+.cta:hover { --lift: 2px; }
+.cta:hover::after { background: var(--raised); }
+.cta:active { --lift: 0px; }
+@media (prefers-reduced-motion: no-preference) {
+  .cta::before { animation: orbit 4s linear infinite; }
+  @keyframes orbit { to { transform: rotate(360deg); } }
+  :root[data-motion="paused"] .cta::before { animation-play-state: paused; }
+}
+/* Secondary actions: the portfolio's plain outline buttons (mono, like every button there). */
+.pill {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: 600 var(--fs-sm)/1 var(--font-code);
+  transition: border-color 0.3s;
+}
+.tools .pill.small { font-family: var(--font-sans); }
+.pill:hover { border-color: var(--text); }
+.pill.small { min-height: 40px; padding: 0 12px; font-size: var(--fs-sm); font-weight: 500; }
+:root[data-motion="paused"] .cta { transform: none; }
 
-/* Featured: double-bezel shell around the glass core */
-.shell {
-  padding: 6px;
-  border-radius: var(--r-card);
-  background: color-mix(in srgb, var(--text) 4%, transparent);
-  border: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
-}
+/* ---------- featured sheet ---------- */
+/* .shell carries the pointer tilt (PointerFx sets --tx/--ty from -1 to 1); .feat is the sheet. */
+.shell { position: relative; }
 .feat {
-  padding: 20px;
-  border-radius: calc(var(--r-card) - 6px);
-  background: var(--glass);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text) 8%, transparent);
+  position: relative;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  background: var(--surface);
+  box-shadow: var(--shadow);
 }
-/* Pointer tilt (components/Spotlight.tsx sets --tx/--ty from -1 to 1). The card turns toward the cursor by up
-   to 5 deg and its title, stack and links shift a few px with it, so they read as raised above the glass (true
-   translateZ layering is flattened by the panel's overflow: hidden). The AG tile tilts a little more because
-   it is small. Transform only; fine pointers only (JS); off under reduced motion and Pause. */
+.feat .kicker { margin: 0 0 10px; font: 400 var(--fs-xs)/1.3 var(--font-code); color: var(--accent); }
+.feat h2 { margin: 0 0 6px; font-size: var(--fs-xl); line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; }
+.feat p { margin: 0; color: var(--muted); font-size: var(--fs-sm); line-height: 1.6; }
+.stack { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 12px 0 0; padding: 0; list-style: none; color: var(--muted); font: 400 var(--fs-xs)/1.6 var(--font-code); }
+.feat-links { display: flex; gap: 20px; margin-top: 14px; }
+.feat-links a {
+  min-height: 32px;
+  display: inline-flex; align-items: center; gap: 4px;
+  font-weight: 600; font-size: var(--fs-sm);
+  text-underline-offset: 4px;
+}
+.feat-links svg { transition: transform 0.45s var(--ease-io); }
+.feat-links a:hover svg { transform: rotate(45deg); }
+/* Border trace: a short run of the signal colour travels round the sheet on hover or keyboard focus. */
+.trace { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); pointer-events: none; overflow: visible; }
+.trace rect { width: calc(100% - 1.5px); height: calc(100% - 1.5px); fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 0.12 0.88; opacity: 0; transition: opacity 0.3s; }
+.feat:hover .trace rect, .feat:focus-within .trace rect { opacity: 1; }
 @media (prefers-reduced-motion: no-preference) {
   .tilt {
     transform: perspective(1000px) rotateX(calc(var(--ty, 0) * -4deg)) rotateY(calc(var(--tx, 0) * 5deg));
-    transition: transform 0.5s var(--ease);
+    transition: transform 0.6s var(--ease);
   }
-  .mark.tilt { transform: perspective(400px) rotateX(calc(var(--ty, 0) * -8deg)) rotateY(calc(var(--tx, 0) * 8deg)); }
-  .tilt .feat h2, .tilt .feat .stack, .tilt .feat-links { transition: transform 0.5s var(--ease); }
+  .tilt .feat h2, .tilt .feat .stack, .tilt .feat-links { transition: transform 0.6s var(--ease); }
   .tilt .feat h2 { transform: translate(calc(var(--tx, 0) * 5px), calc(var(--ty, 0) * 3px)); }
   .tilt .feat .stack, .tilt .feat-links { transform: translate(calc(var(--tx, 0) * 3px), calc(var(--ty, 0) * 2px)); }
+  .trace rect { animation: trace 3.2s linear infinite; }
+  @keyframes trace { to { stroke-dashoffset: -1; } }
   :root[data-motion="paused"] .tilt,
   :root[data-motion="paused"] .tilt .feat h2,
   :root[data-motion="paused"] .tilt .feat .stack,
   :root[data-motion="paused"] .tilt .feat-links { transform: none; }
+  :root[data-motion="paused"] .trace rect { animation: none; }
 }
-.feat .kicker { margin: 0 0 10px; font: 500 var(--fs-xs)/1.3 var(--font-code); color: var(--accent); }
-.feat h2 { margin: 0 0 6px; font-size: var(--fs-xl); line-height: 1.2; font-weight: 800; letter-spacing: -0.02em; }
-.feat p { margin: 0; color: var(--muted); font-size: var(--fs-sm); line-height: 1.6; }
-.stack { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; padding: 0; list-style: none; }
-.stack li { padding: 3px 10px; border-radius: var(--r-pill); background: var(--raised); font: 400 var(--fs-xs)/1.6 var(--font-code); }
-.feat-links { display: flex; gap: 20px; margin-top: 16px; }
-.feat-links a {
-  min-height: 32px;
-  display: inline-flex; align-items: center; gap: 4px;
-  font-weight: 700; font-size: var(--fs-sm);
-  text-underline-offset: 4px;
-}
-.feat-links svg { transition: transform 0.5s var(--ease); }
-.feat-links a:hover svg { transform: translate(2px, -2px); }
 
 /* ---------- link groups ---------- */
-.group { margin-top: 32px; }
-.group-h { margin: 0 0 12px; font-size: var(--fs-sm); font-weight: 600; color: var(--muted); }
+.group { margin-top: 28px; }
+.group-h { display: inline-block; margin: 0 0 10px; padding: 2px 6px 2px 0; background: var(--bg); font: 400 var(--fs-xs)/1 var(--font-code); color: var(--muted); }
 /* minmax(0, 1fr) lets rows shrink below their content width so long handles ellipsize at 320 px. */
-.links { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.links { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
 .link {
-  min-height: 60px;
+  position: relative; isolation: isolate; overflow: hidden;
+  min-height: 54px;
   display: flex; align-items: center; gap: 14px;
-  padding: 0 18px 0 10px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
   border-radius: var(--r-row);
-  background: var(--glass);
+  background: var(--surface);
   text-decoration: none;
   font-weight: 600;
-  transition: transform 0.5s var(--ease);
 }
-.link:hover { transform: translateX(4px); }
-.tile {
-  width: 40px; height: 40px; flex: none;
-  display: grid; place-items: center;
-  border-radius: var(--r-tile);
-  background: var(--raised);
-  transition: color 0.3s;
+/* Ink wipe: sun yellow sweeps in from the left on hover or keyboard focus; text flips to dark on it. */
+.link::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: var(--wipe);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.45s var(--ease-io);
 }
-.link:hover .tile { color: var(--accent); }
+.link:hover, .link:focus-visible { color: var(--on-wipe); border-color: var(--wipe); }
+.link:hover::before, .link:focus-visible::before { transform: scaleX(1); }
+.lname { transition: transform 0.45s var(--ease-io); }
+.link:hover .lname, .link:focus-visible .lname { transform: translateX(6px); }
 .handle {
   margin-left: auto; min-width: 0;
   color: var(--muted);
   font: 400 var(--fs-xs)/1 var(--font-code);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.go { flex: none; color: var(--muted); transition: transform 0.5s var(--ease), color 0.3s; }
-.link:hover .go { color: var(--accent); transform: translate(2px, -2px); }
+.link:hover .handle, .link:focus-visible .handle { color: var(--on-wipe); }
+.go { flex: none; color: var(--muted); transition: transform 0.45s var(--ease-io); }
+.link:hover .go, .link:focus-visible .go { color: var(--on-wipe); transform: rotate(45deg); }
 
 /* ---------- tools ---------- */
-/* A quiet toolbar: utilities sit below the identity as borderless buttons so they never compete with View resume
-   and Email. Hover and pressed states bring the glass back. */
+/* A quiet toolbar of borderless buttons so utilities never compete with View resume and Email. */
 .tools { margin-top: 28px; }
 .tool-row { display: flex; flex-wrap: wrap; gap: 4px; }
 .tools .pill.small, .tools .motion, .tools .modes { border-color: transparent; background: transparent; }
-.tools .pill.small { min-height: 40px; padding: 0 12px; color: var(--muted); }
-.tools .pill.small:hover, .tools .motion:hover { border-color: var(--border); background: var(--glass); color: var(--text); }
-/* Collapsed while empty, so the toolbar rows sit together; the message appears after a click (user-initiated). */
+.tools .pill.small { color: var(--muted); }
+.tools .pill.small:hover, .tools .motion:hover { border-color: var(--border); background: var(--surface); color: var(--text); }
 .toast:empty { min-height: 0; margin: 0; }
-.toast { min-height: 20px; margin: 8px 0 0; font: 500 var(--fs-xs)/1.4 var(--font-code); color: var(--status); }
+.toast { min-height: 20px; margin: 8px 0 0; font: 400 var(--fs-xs)/1.4 var(--font-code); color: var(--status); }
 .toast[data-kind="error"] { color: var(--text); }
 .prefs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin-top: 2px; }
-.modes {
-  display: inline-flex; padding: 3px; gap: 2px;
-  border: 1px solid var(--border); border-radius: var(--r-pill);
-  background: var(--glass);
-}
+.modes { display: inline-flex; padding: 3px; gap: 2px; border: 1px solid var(--border); border-radius: var(--r-btn); }
 .modes button, .motion {
   min-height: 36px; min-width: 44px; padding: 0 12px;
-  border: 0; border-radius: var(--r-pill);
+  border: 0; border-radius: 6px;
   background: transparent; color: var(--muted);
   font: 500 var(--fs-sm)/1 var(--font-sans);
   cursor: pointer;
 }
-.modes button[aria-pressed="true"] { background: var(--raised); color: var(--text); box-shadow: inset 0 0 0 1px var(--border); }
-.motion {
-  display: inline-flex; align-items: center; gap: 6px;
-  min-height: 42px;
-  border: 1px solid var(--border);
-  background: var(--glass);
-}
+.modes button[aria-pressed="true"] { background: var(--raised); color: var(--text); }
+.motion { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; border: 1px solid var(--border); }
 .motion[aria-pressed="true"] { color: var(--text); }
 .fine { margin: 12px 0 0; color: var(--muted); font-size: var(--fs-sm); }
+/* The toolbar and footnote sit straight on the page: give them the page colour so the field never runs under text. */
+.foot .tools, .foot .fine { background: var(--bg); }
+
+/* ---------- skills strip ---------- */
+/* The list is read once by screen readers; the moving copy is aria-hidden. Pause stops it (WCAG 2.2.2). */
+.ticker {
+  position: relative; z-index: 1;
+  margin-top: 48px;
+  padding: 14px 0;
+  border-block: 1px solid var(--border);
+  background: var(--bg);
+  overflow: hidden; white-space: nowrap;
+  font: 400 var(--fs-xs)/1 var(--font-code);
+  color: var(--muted);
+}
+.ticker ul { display: inline-flex; margin: 0; padding: 0; list-style: none; }
+.ticker li { padding: 0 14px; }
+.ticker li::after { content: "/"; margin-left: 28px; color: var(--border); }
+.ticker .run { display: inline-flex; }
+@media (prefers-reduced-motion: no-preference) {
+  .ticker .run { animation: ticker 32s linear infinite; }
+  @keyframes ticker { to { transform: translateX(-50%); } }
+  :root[data-motion="paused"] .ticker .run { animation-play-state: paused; }
+}
 
 /* ---------- QR dialog ---------- */
 .qr-dialog {
@@ -494,15 +411,15 @@ a { color: inherit; }
   color: var(--text);
   text-align: center;
 }
-.qr-dialog::backdrop { background: rgb(0 0 0 / 0.6); backdrop-filter: blur(4px); }
-.qr-dialog h2 { margin: 0 0 16px; font-size: var(--fs-lg); font-weight: 800; }
-.qr-frame { display: inline-block; padding: 12px; background: #ffffff; border-radius: 16px; }
+.qr-dialog::backdrop { background: rgb(0 0 0 / 0.6); }
+.qr-dialog h2 { margin: 0 0 16px; font-size: var(--fs-lg); font-weight: 700; }
+.qr-frame { display: inline-block; padding: 12px; background: #ffffff; border-radius: 10px; }
 .qr-frame img { display: block; width: 220px; height: 220px; }
-.qr-url { margin: 12px 0 16px; font: 500 var(--fs-sm)/1.4 var(--font-code); }
+.qr-url { margin: 12px 0 16px; font: 400 var(--fs-sm)/1.4 var(--font-code); }
 .qr-dialog .pill { width: 100%; }
 
 /* ---------- resume viewer (app/resume) ---------- */
-/* Telemetry-style chrome (mono uppercase readouts, bracketed title) on the site's glass + pill shapes. */
+/* Telemetry-style chrome (mono uppercase readouts, bracketed title) on the site's flat sheets. */
 .viewer-page { position: relative; z-index: 1; }
 .viewer { display: flex; flex-direction: column; height: 100dvh; }
 .viewer-bar {
@@ -510,8 +427,7 @@ a { color: inherit; }
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px;
   padding: 10px 16px;
   border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg) 72%, transparent);
-  backdrop-filter: blur(14px) saturate(140%);
+  background: var(--bg);
 }
 .viewer-title {
   margin: 0; flex: 1 1 auto; min-width: 0;
@@ -520,21 +436,22 @@ a { color: inherit; }
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .viewer-title .bracket { color: var(--accent); white-space: pre; }
+.scramble { white-space: pre; }
 .viewer-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .readout { font: 500 var(--fs-xs)/1.3 var(--font-code); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.zoom { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--glass); }
+.zoom { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: 1px solid var(--border); border-radius: var(--r-btn); background: var(--surface); }
 .zoom-level { min-width: 48px; text-align: center; color: var(--text); }
 .vbtn {
   min-height: 44px; min-width: 44px;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 0 14px;
-  border: 1px solid var(--border); border-radius: var(--r-pill);
-  background: var(--glass); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--r-btn);
+  background: var(--surface); color: var(--text);
   font: 600 var(--fs-sm)/1 var(--font-sans); text-decoration: none;
   cursor: pointer;
   transition: border-color 0.3s, transform 0.5s var(--ease);
 }
-.vbtn:hover:not(:disabled) { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+.vbtn:hover:not(:disabled) { border-color: var(--text); }
 .vbtn:active:not(:disabled) { transform: scale(0.97); }
 .vbtn:disabled { opacity: 0.45; cursor: not-allowed; }
 .vbtn.icon { min-width: 40px; min-height: 40px; padding: 0; border-color: transparent; background: transparent; }
@@ -550,14 +467,13 @@ a { color: inherit; }
 .pdf-canvas {
   display: block; max-width: none;
   background: #ffffff;
-  border-radius: 6px;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--text) 10%, transparent),
-    0 40px 80px -40px color-mix(in srgb, var(--accent-2) 70%, transparent);
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px var(--border), var(--shadow);
 }
 .pdf-skeleton {
   max-width: 100%; aspect-ratio: 1 / 1.414;
-  border-radius: 6px;
-  background: linear-gradient(100deg, var(--raised) 30%, color-mix(in srgb, var(--accent-2) 14%, var(--raised)) 50%, var(--raised) 70%) 0 0 / 300% 100%;
+  border-radius: 4px;
+  background: linear-gradient(100deg, var(--raised) 30%, var(--surface) 50%, var(--raised) 70%) 0 0 / 300% 100%;
 }
 @media (prefers-reduced-motion: no-preference) {
   .pdf-skeleton { animation: shimmer 1.6s linear infinite; }
@@ -565,7 +481,7 @@ a { color: inherit; }
 }
 .viewer-error {
   max-width: 440px; margin: 12vh auto 0; padding: 24px;
-  border: 1px solid var(--border); border-radius: var(--r-card); background: var(--glass);
+  border: 1px solid var(--border); border-radius: var(--r-card); background: var(--surface);
 }
 .viewer-error p { margin: 0 0 12px; }
 .viewer-error .readout { color: var(--accent); }

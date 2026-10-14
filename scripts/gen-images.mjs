@@ -42,33 +42,33 @@ header.writeUInt32LE(png32.length, 14); // image size
 header.writeUInt32LE(22, 18); // image offset
 await writeFile(new URL("../app/favicon.ico", import.meta.url), Buffer.concat([header, png32]));
 
-// Open Graph card: aurora on near-black, glass monogram tile, name, status.
+// Open Graph card ("Signal" theme): graphite, a faint node network on the right, plain AG stroke, two-line name,
+// mono status with the sun-yellow dot.
+const nodes = [[760, 90], [880, 160], [1010, 110], [1120, 210], [820, 300], [960, 280], [1090, 360], [870, 430], [1000, 470], [1150, 520], [780, 540], [930, 590]];
+const links = [[0, 1], [1, 2], [2, 3], [1, 4], [1, 5], [5, 3], [5, 6], [4, 7], [7, 8], [8, 6], [6, 9], [8, 9], [7, 10], [10, 11], [8, 11], [4, 5]];
+const net = links.map(([a, b]) => `<line x1="${nodes[a][0]}" y1="${nodes[a][1]}" x2="${nodes[b][0]}" y2="${nodes[b][1]}"/>`).join("")
+  + nodes.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="${i % 4 === 1 ? 5 : 3}"${i === 5 ? ' style="fill:#f5b942"' : ""}/>`).join("");
 await page.setViewportSize({ width: 1200, height: 630 });
 await page.setContent(`<!doctype html><html><head>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
-  body{margin:0;width:1200px;height:630px;background:#06050d;color:#f5f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden;position:relative}
-  .a{position:absolute;border-radius:50%}
-  .a1{width:900px;height:900px;left:-380px;top:-460px;background:radial-gradient(circle,rgba(124,58,237,.6),transparent 62%)}
-  .a2{width:900px;height:900px;right:-420px;top:-120px;background:radial-gradient(circle,rgba(79,70,229,.45),transparent 62%)}
-  .a3{width:520px;height:520px;left:520px;bottom:-380px;background:radial-gradient(circle,rgba(250,204,21,.35),transparent 62%)}
+  body{margin:0;width:1200px;height:630px;background:#0b0b0c;color:#ededed;font-family:'Geist',sans-serif;overflow:hidden;position:relative}
+  .net{position:absolute;inset:0}
+  .net line{stroke:rgba(237,237,237,.16);stroke-width:1.5}
+  .net circle{fill:rgba(237,237,237,.55)}
   .wrap{position:absolute;left:96px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center}
-  .tile{width:150px;height:125px;margin-bottom:36px}
-  h1{font-size:88px;line-height:1;margin:0 0 18px;font-weight:800;letter-spacing:-.045em}
-  p{margin:0;color:#a9a3c2;font-size:30px}
-  .pill{display:inline-flex;gap:14px;align-items:center;align-self:flex-start;margin-top:30px;padding:12px 22px;border:1px solid rgba(250,204,21,.4);border-radius:999px;
-    font:500 24px 'JetBrains Mono',monospace;background:rgba(250,204,21,.08)}
-  .dot{width:14px;height:14px;border-radius:50%;background:#facc15}
-  .url{position:absolute;right:64px;bottom:52px;font:500 24px 'JetBrains Mono',monospace;color:#a9a3c2}
+  .mark{width:130px;height:82px;margin-bottom:40px}
+  h1{font-size:96px;line-height:.98;margin:0 0 30px;font-weight:800;letter-spacing:-.045em}
+  h1 span{display:block;margin-left:.5em;color:#9b9b9f}
+  .status{display:flex;gap:14px;align-items:center;font:500 24px 'JetBrains Mono',monospace}
+  .dot{width:14px;height:14px;border-radius:50%;background:#f5b942}
+  .url{position:absolute;right:64px;bottom:52px;font:500 22px 'JetBrains Mono',monospace;color:#9b9b9f}
 </style></head><body>
-<div class="a a1"></div><div class="a a2"></div><div class="a a3"></div>
+<svg class="net" viewBox="0 0 1200 630">${net}</svg>
 <div class="wrap">
-  <svg class="tile" viewBox="0 0 120 100"><defs><linearGradient id="s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5f3ff"/><stop offset=".45" stop-color="#a78bfa"/><stop offset=".8" stop-color="#7c3aed"/><stop offset="1" stop-color="#facc15"/></linearGradient></defs>
-    <rect x="1" y="1" width="118" height="98" rx="30" fill="rgba(15,13,26,.75)" stroke="rgba(245,243,255,.16)"/>
-    <g fill="none" stroke="url(#s)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 78 L30 24 H38 L54 78 M21 60 H47"/><path d="M99.2 35.9 A25 25 0 1 0 105 52 H87"/></g></svg>
-  <h1>Abhinesh Gangwar</h1>
-  <p>B.Tech CSE (AI &amp; ML) at Graphic Era. Building AI tools.</p>
-  <div class="pill"><span class="dot"></span>Open to SWE or ML internships</div>
+  <svg class="mark" viewBox="8 18 104 66"><g fill="none" stroke="#ededed" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 78 L30 24 H38 L54 78 M21 60 H47"/><path d="M99.2 35.9 A25 25 0 1 0 105 52 H87"/></g></svg>
+  <h1>Abhinesh<span>Gangwar.</span></h1>
+  <div class="status"><span class="dot"></span>Open to SWE or ML internships</div>
 </div>
 <div class="url">links.abhinesh.codes</div>
 </body></html>`);

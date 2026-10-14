@@ -25,6 +25,19 @@ export const profile = {
   portfolio: "https://abhinesh.codes",
 };
 
+/** The scrolling strip under the page. Every item comes from abhinesh.codes (About: focus and primary stack;
+ *  Revlens AI's stack), so the strip never claims a skill the portfolio doesn't. */
+export const skills = [
+  "Python",
+  "JavaScript",
+  "Node.js",
+  "FastAPI",
+  "PostgreSQL",
+  "Applied NLP",
+  "API backends",
+  "Full-stack web apps",
+];
+
 export const featured = {
   title: "Revlens AI",
   summary: "Review intelligence for homestay owners: sentiment, themes and analytics dashboards.",

@@ -1,16 +1,19 @@
 # links.abhinesh.codes
 
-Link hub for Abhinesh Gangwar, in the "Aurora Glass" style: a violet aurora with a sun-yellow glint on midnight black,
-glass panels, and a self-drawing AG monogram. It's built with Next.js and exported as static files, so any static host
-can serve it.
+Link hub for Abhinesh Gangwar, in the "Signal" style: graphite with a single sun-yellow signal, a live 3D neuron
+network behind solid sheets, kinetic type, and a self-drawing AG monogram. It's built with Next.js and exported as
+static files, so any static host can serve it.
 
 ## Features
 
 - Resume-first layout for recruiters, then the featured project and grouped profile links (two columns on desktop)
 - Custom resume viewer at `/resume/`: PDF.js renders the live PDF from abhinesh.codes, with a page counter, zoom
   (buttons and `-` `+` `0` keys), a real download, and loading and error states. PDF.js loads only on that page.
-- CSS-only animated aurora with film grain, a pause control (WCAG 2.2.2), and a static frame under `prefers-reduced-motion`
-- Glass panels with gradient hairline borders and a cursor spotlight (fine pointers only)
+- Canvas 3D neuron network (no three.js): turning node volume with signals travelling along links; it pauses in
+  hidden tabs and with the Pause control (WCAG 2.2.2), and draws one still frame under `prefers-reduced-motion`
+- Motion that never hides content: letter-by-letter name, spring-settling sheets, a tilting featured card with a
+  border trace, sun-yellow wipes on link rows, a magnetic View resume button styled like the portfolio's, and a
+  skills strip
 - Phosphor icons rendered on the server (no icon JavaScript in the browser)
 - Light and dark mode that follows the system, with a saved manual override and no flash on load
 - Copy-email button with success and failure feedback, and a QR code in a native `<dialog>`
