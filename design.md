@@ -96,12 +96,18 @@ muted, on-cta/cta, on-wipe/wipe, border/surface, border/bg, focus, accent, statu
 
 - PDF.js 6.4 renders the live `https://abhinesh.codes/resume.pdf` (CORS `*`) into canvases inside a custom viewer.
   It's lazy-loaded on that route only: the library is ~135 KB gzip and the worker ~376 KB gzip.
-- **Chrome:** industrial "telemetry" language (from the industrial-brutalist skill, applied only here): mono uppercase
-  readouts, a `[ RESUME.PDF ]` bracketed title, and `PG 01 / 02`. It uses the site's flat sheets and 8 px buttons
-  rather than that skill's square corners.
-- **States:** loading (skeleton pages), error (`[ ERR ]` panel with an Open the PDF link and Try again), ready.
-- **Controls:** zoom out/in/fit (also the `-` `+` `0` keys), a Download button that saves a real file (blob from the loaded
-  bytes), back to links, and Open the original PDF.
+- **Chrome (Precision, 2026-10-21):** a floating hairline toolbar sheet over the dot grid: a ghost "Links" back
+  button, the title "Resume" in Geist 600 with the file name in muted mono, a sentence-case readout ("Page 1 of 2"),
+  a segmented zoom control, and a solid Download button (the `--cta` fill). The page is a white sheet with a
+  hairline ring. The earlier "telemetry" chrome (`[ RESUME.PDF ]` title with a scramble effect, `PG 01 / 02`,
+  `[ ERR ]`) was removed with it; `ScrambleText.tsx` is deleted (it's in git history).
+- **States:** loading (one skeleton page, readout "Loading"), error (a card like the featured one: a `//` kicker, a
+  heading, Open the PDF and Try again; readout "Not loaded"), ready.
+- **Controls:** zoom out/in/fit, a Download button that saves a real file (blob from the loaded bytes), back to
+  links, and Open the original PDF. The `-` `+` `0` keys work only while the document region or the zoom group
+  has focus (WCAG 2.1.4: window-wide single-character shortcuts can't be turned off); a hint under the pages says
+  "Click the page, then - + 0" on fine pointers. A test proves the keys do nothing elsewhere (and failed against
+  the old window-wide listener).
 - **Accessibility:** canvases are `aria-hidden`; each page's extracted text sits beside it for screen readers. The page
   counter and zoom level use `output` with `aria-live`. Phone toolbar buttons are icon-only, with `aria-label`s that
   contain the visible word.

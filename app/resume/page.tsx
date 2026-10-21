@@ -12,7 +12,7 @@ export default function ResumePage() {
   return (
     <>
       <main className="viewer-page">
-        <ResumeViewer src={profile.resume} fileName="Abhinesh-Gangwar-Resume.pdf" title="RESUME.PDF" />
+        <ResumeViewer src={profile.resume} fileName="Abhinesh-Gangwar-Resume.pdf" title="Resume" />
         <noscript>
           <p className="viewer-noscript">
             The viewer needs JavaScript. <a href={profile.resume}>Open the resume PDF</a>.

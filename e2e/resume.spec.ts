@@ -54,7 +54,9 @@ test("renders every page, counts pages, exposes the text to assistive tech, no e
     return false;
   });
   expect(inked).toBe(true);
-  await expect(page.locator(".viewer-bar output").first()).toContainText("PG 01 / 02");
+  await expect(page.locator(".viewer-bar output").first()).toHaveText("Page 1 of 2");
+  await expect(page.locator(".pdf-page figcaption").nth(1)).toHaveText("Page 2 of 2");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("ResumeAbhinesh-Gangwar-Resume.pdf");
   await expect(page.locator(".pdf-page .sr-only").first()).toContainText("Fixture resume");
   expect(errors).toEqual([]);
 });
@@ -68,6 +70,9 @@ test("zoom buttons and keys change the page size and readout", async ({ page }) 
   await page.getByRole("button", { name: "Zoom in" }).click();
   await expect(page.locator(".zoom-level")).toContainText("125%");
   await expect.poll(async () => (await canvas.boundingBox())!.width).toBeGreaterThan(w0 * 1.2);
+  // The keys need focus in the document or the zoom controls. WebKit (like Safari) doesn't focus a button on
+  // click, so give the document region focus explicitly, as a visitor does by clicking the page.
+  await page.getByRole("region", { name: "Resume, document" }).focus();
   await page.keyboard.press("0");
   await expect(page.locator(".zoom-level")).toContainText("100%");
   for (let i = 0; i < 3; i++) await page.keyboard.press("-");
@@ -78,6 +83,32 @@ test("zoom buttons and keys change the page size and readout", async ({ page }) 
   for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Zoom in" }).click();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
   expect(overflow).toBe(false);
+});
+
+test("zoom keys work only while the document or the zoom controls have focus (WCAG 2.1.4)", async ({ page }) => {
+  await serveFixture(page);
+  await page.goto("/resume/");
+  await expectReady(page);
+  const level = page.locator(".zoom-level");
+  // Focus elsewhere (the back link): single-character keys must do nothing.
+  await page.getByRole("link", { name: "Back to links" }).focus();
+  await page.keyboard.press("+");
+  await page.keyboard.press("-");
+  await expect(level).toContainText("100%");
+  // Focus on body (nothing focused): still nothing.
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  await page.keyboard.press("+");
+  await expect(level).toContainText("100%");
+  // The document region: the keys zoom.
+  const region = page.getByRole("region", { name: "Resume, document" });
+  await expect(region).toHaveAttribute("aria-keyshortcuts", "+ - 0");
+  // A click on the page gives the region focus in every engine (the on-page hint says "Click the page").
+  await region.click({ position: { x: 40, y: 40 } });
+  await expect(region).toBeFocused();
+  await page.keyboard.press("+");
+  await expect(level).toContainText("125%");
+  await page.keyboard.press("0");
+  await expect(level).toContainText("100%");
 });
 
 test("Download saves the PDF with a proper file name", async ({ page }) => {
@@ -101,7 +132,9 @@ test("load failure shows an error with a direct link, and Try again recovers", a
   // Scoped: Next.js also renders its own (empty) role="alert" route announcer.
   const alert = page.locator(".viewer-error");
   await expect(alert).toHaveAttribute("role", "alert");
-  await expect(alert).toContainText("COULD NOT LOAD THE PDF");
+  await expect(alert).toContainText("couldn't load the pdf");
+  await expect(alert.getByRole("heading", { level: 2 })).toHaveText("The resume didn't load here");
+  await expect(page.locator(".viewer-bar output").first()).toHaveText("Not loaded");
   await expect(alert.getByRole("link", { name: "Open the PDF" })).toHaveAttribute("href", PDF_URL);
   await expect(page.getByRole("button", { name: "Download resume" })).toBeDisabled();
   fail = false;

@@ -8,7 +8,7 @@ self-drawing AG monogram. It's built with Next.js and exported as static files, 
 
 - Resume-first layout for recruiters, then the featured project and grouped profile links (two columns on desktop)
 - Custom resume viewer at `/resume/`: PDF.js renders the live PDF from abhinesh.codes, with a page counter, zoom
-  (buttons and `-` `+` `0` keys), a real download, and loading and error states. PDF.js loads only on that page.
+  (buttons, plus `-` `+` `0` while the document has focus), a real download, and loading and error states. PDF.js loads only on that page.
 - Canvas 3D neural network training (no three.js): forward and backward passes sweep through the layers; it pauses in
   hidden tabs and with the Pause control (WCAG 2.2.2), and draws one still frame under `prefers-reduced-motion`
 - Command menu (Ctrl/Cmd+K or the command bar): an accessible dialog with a searchable list of every link and action

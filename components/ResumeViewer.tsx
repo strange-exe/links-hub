@@ -10,7 +10,6 @@ import {
   ArrowsInLineHorizontalIcon,
 } from "@phosphor-icons/react/ssr";
 import Link from "next/link";
-import ScrambleText from "@/components/ScrambleText";
 import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
@@ -21,7 +20,6 @@ const ZOOM_MAX = 2;
 const ZOOM_STEP = 0.25;
 /** Widest a page renders at 100% (fit), in CSS px. */
 const MAX_PAGE_WIDTH = 860;
-const pad = (n: number) => String(n).padStart(2, "0");
 
 /** Renders one PDF page into a canvas sized for the current width and device pixel ratio. */
 function PdfPage({ doc, number, cssWidth }: { doc: PDFDocumentProxy; number: number; cssWidth: number }) {
@@ -146,17 +144,16 @@ export default function ResumeViewer({ src, fileName, title }: { src: string; fi
 
   const zoomBy = useCallback((delta: number) => setZoom((z) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, +(z + delta).toFixed(2)))), []);
 
-  // Keyboard: + / - / 0, unless the visitor is typing somewhere.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey || e.altKey || (e.target as HTMLElement).closest("input, textarea")) return;
-      if (e.key === "+" || e.key === "=") zoomBy(ZOOM_STEP);
-      else if (e.key === "-") zoomBy(-ZOOM_STEP);
-      else if (e.key === "0") setZoom(1);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [zoomBy]);
+  // Keyboard: + / - / 0 zoom, but only while the document region or the zoom controls have focus. Single-character
+  // shortcuts on the whole window would fail WCAG 2.1.4 (no way to turn them off); focus-scoped ones are allowed.
+  const onZoomKey = (e: React.KeyboardEvent) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === "+" || e.key === "=") zoomBy(ZOOM_STEP);
+    else if (e.key === "-") zoomBy(-ZOOM_STEP);
+    else if (e.key === "0") setZoom(1);
+    else return;
+    e.preventDefault();
+  };
 
   // Same-origin blob from the bytes already loaded, so "Download" saves a file instead of opening a tab.
   const download = async () => {
@@ -176,24 +173,23 @@ export default function ResumeViewer({ src, fileName, title }: { src: string; fi
     <div className="viewer" data-state={status}>
       <header className="viewer-bar">
         {/* aria-labels keep a name when phones hide the text; they contain the visible word (WCAG 2.5.3). */}
-        <Link className="vbtn" href="/" prefetch={false} aria-label="Back to links">
-          <ArrowLeftIcon size={18} weight="light" aria-hidden="true" />
+        <Link className="vbtn ghost" href="/" prefetch={false} aria-label="Back to links">
+          <ArrowLeftIcon size={18} weight="regular" aria-hidden="true" />
           <span>Links</span>
         </Link>
         <h1 className="viewer-title">
-          <span className="bracket" aria-hidden="true">[ </span>
-          <ScrambleText text={title} />
-          <span className="bracket" aria-hidden="true"> ]</span>
+          {title}
+          <span className="viewer-file">{fileName}</span>
         </h1>
         <div className="viewer-tools">
           <output className="readout" aria-live="polite">
-            <span className="sr-only">Page </span>PG {pad(status === "ready" ? current : 0)} / {pad(pages)}
+            {status === "ready" ? `Page ${current} of ${pages}` : status === "loading" ? "Loading" : "Not loaded"}
           </output>
-          <div className="zoom" role="group" aria-label="Zoom">
+          <div className="zoom" role="group" aria-label="Zoom" aria-keyshortcuts="+ - 0" onKeyDown={onZoomKey}>
             <button type="button" className="vbtn icon" onClick={() => zoomBy(-ZOOM_STEP)} disabled={zoom <= ZOOM_MIN} aria-label="Zoom out">
               <MagnifyingGlassMinusIcon size={18} weight="light" aria-hidden="true" />
             </button>
-            <output className="readout zoom-level" aria-live="polite">
+            <output className="zoom-level" aria-live="polite">
               <span className="sr-only">Zoom </span>
               {Math.round(zoom * 100)}%
             </output>
@@ -211,22 +207,29 @@ export default function ResumeViewer({ src, fileName, title }: { src: string; fi
         </div>
       </header>
 
-      <div className="viewer-scroll" ref={scrollerRef} tabIndex={0} aria-label={`${title}, document`} role="region">
+      <div
+        className="viewer-scroll"
+        ref={scrollerRef}
+        tabIndex={0}
+        aria-label={`${title}, document`}
+        aria-keyshortcuts="+ - 0"
+        role="region"
+        onKeyDown={onZoomKey}
+      >
         {status === "loading" && (
           <div className="pdf-stack" aria-busy="true">
             <p className="sr-only" role="status">
               Loading resume
             </p>
-            {[0, 1].map((i) => (
-              <div key={i} className="pdf-skeleton" style={{ width: fitWidth || "100%" }} aria-hidden="true" />
-            ))}
+            <div className="pdf-skeleton" style={{ width: fitWidth || "100%" }} aria-hidden="true" />
           </div>
         )}
 
         {status === "error" && (
           <div className="viewer-error" role="alert">
-            <p className="readout">[ ERR ] COULD NOT LOAD THE PDF</p>
-            <p>The resume didn&apos;t load here. You can open it directly instead.</p>
+            <p className="kicker">{"// couldn't load the pdf"}</p>
+            <h2>The resume didn&apos;t load here</h2>
+            <p>Your connection or the file host may be down. You can open the PDF directly instead.</p>
             <div className="viewer-error-actions">
               <a className="vbtn primary" href={src}>
                 <ArrowSquareOutIcon size={18} weight="bold" aria-hidden="true" />
@@ -246,15 +249,18 @@ export default function ResumeViewer({ src, fileName, title }: { src: string; fi
               <figure className="pdf-page" key={i} data-page={i + 1}>
                 <PdfPage doc={doc} number={i + 1} cssWidth={cssWidth} />
                 <figcaption className="readout">
-                  PG {pad(i + 1)} / {pad(pages)}
+                  Page {i + 1} of {pages}
                 </figcaption>
                 <div className="sr-only">{texts[i]}</div>
               </figure>
             ))}
             <p className="viewer-foot">
               <a href={src}>
-                Open the original PDF <ArrowSquareOutIcon size={14} weight="light" aria-hidden="true" />
+                Open the original PDF <ArrowSquareOutIcon size={14} weight="regular" aria-hidden="true" />
               </a>
+              <span className="viewer-keys" aria-hidden="true">
+                Click the page, then <kbd>-</kbd> <kbd>+</kbd> <kbd>0</kbd> to zoom
+              </span>
             </p>
           </div>
         )}
