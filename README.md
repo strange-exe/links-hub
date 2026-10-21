@@ -1,8 +1,8 @@
 # links.abhinesh.codes
 
-Link hub for Abhinesh Gangwar, in the "Signal" style: graphite with a single electric-blue signal, a 3D neural
-network training behind solid sheets, kinetic type, and a self-drawing AG monogram. It's built with Next.js and exported as
-static files, so any static host can serve it.
+Link hub for Abhinesh Gangwar, in the "Precision" style: graphite surfaces with hairlines and one electric-blue
+accent, a command menu (Ctrl/Cmd+K), a 3D neural network training behind solid sheets, kinetic type, and a
+self-drawing AG monogram. It's built with Next.js and exported as static files, so any static host can serve it.
 
 ## Features
 
@@ -11,9 +11,10 @@ static files, so any static host can serve it.
   (buttons and `-` `+` `0` keys), a real download, and loading and error states. PDF.js loads only on that page.
 - Canvas 3D neural network training (no three.js): forward and backward passes sweep through the layers; it pauses in
   hidden tabs and with the Pause control (WCAG 2.2.2), and draws one still frame under `prefers-reduced-motion`
-- Motion that never hides content: letter-by-letter name, spring-settling sheets, a tilting featured card with a
-  border trace, blue wipes on link rows, a magnetic View resume button styled like the portfolio's, and a
-  skills strip
+- Command menu (Ctrl/Cmd+K or the command bar): an accessible dialog with a searchable list of every link and action
+- Motion that never hides content: letter-by-letter name, settling sheets, a tilting featured card with a
+  travelling edge light, accent bars on link rows, a magnetic View resume button styled like the portfolio's,
+  and a skills strip
 - Phosphor icons rendered on the server (no icon JavaScript in the browser)
 - Light and dark mode that follows the system, with a saved manual override and no flash on load
 - Copy-email button with success and failure feedback, and a QR code in a native `<dialog>`
@@ -46,7 +47,7 @@ it runs alongside `npm run preview` (4173); set `E2E_PORT` if 4174 is taken. Git
 - **Accessibility:** axe (WCAG 2.2 AA) and token contrast.
 - **Favicon:** the declared icons are fetched and their bytes checked.
 - **Motion:** reduced motion, the pause control and its persistence.
-- **Interactions:** colour-mode persistence, copy-email success and failure, QR dialog focus handling, keyboard order, the chip highlight, and the JSON-LD.
+- **Interactions:** colour-mode persistence, copy-email success and failure, QR dialog focus handling, the command menu (keys, filtering, empty state, focus return, actions, axe), keyboard order, and the JSON-LD.
 
 ## Deploying
 

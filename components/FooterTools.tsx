@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { CopyIcon, PauseIcon, PlayIcon, QrCodeIcon } from "@phosphor-icons/react/ssr";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { TOOLS_EVENT, type ToolAction } from "@/components/CommandPalette";
 import { getMotion, getTheme, serverMotion, serverTheme, setPref, subscribe, type Theme } from "@/lib/prefs";
 import { SITE_URL, profile } from "@/lib/profile";
 
@@ -27,14 +28,25 @@ export default function FooterTools() {
     timer.current = window.setTimeout(() => setToast(null), 4000);
   };
 
-  const copyEmail = async () => {
+  const copyEmail = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(profile.email);
       show(`Copied ${profile.email}`, "ok");
     } catch {
       show(`Couldn't copy. The address is ${profile.email}`, "error");
     }
-  };
+  }, []);
+
+  // The command menu runs these through an event, so the feedback stays here.
+  useEffect(() => {
+    const onRun = (e: Event) => {
+      const action = (e as CustomEvent<ToolAction>).detail;
+      if (action === "copy-email") void copyEmail();
+      if (action === "qr") dialogRef.current?.showModal();
+    };
+    window.addEventListener(TOOLS_EVENT, onRun);
+    return () => window.removeEventListener(TOOLS_EVENT, onRun);
+  }, [copyEmail]);
 
   return (
     <div className="tools">
@@ -60,7 +72,7 @@ export default function FooterTools() {
             </button>
           ))}
         </div>
-        {/* WCAG 2.2.2: the aurora moves for longer than 5 s, so visitors can stop it. */}
+        {/* WCAG 2.2.2: the network, the strip and the loops move for longer than 5 s, so visitors can stop them. */}
         <button type="button" className="motion" aria-pressed={paused} onClick={() => setPref("motion", paused ? "on" : "paused")}>
           {paused ? <PlayIcon size={16} weight="light" aria-hidden="true" /> : <PauseIcon size={16} weight="light" aria-hidden="true" />}
           Pause<span className="sr-only"> background animation</span>

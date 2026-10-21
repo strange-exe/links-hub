@@ -89,7 +89,8 @@ export default function Field() {
       // Camera: a gentle sway (not a spin, so the columns stay readable), leaning toward a fine pointer.
       const ay = Math.sin(t * 0.00035) * 0.55 + leanX * 0.35, ax = 0.22 + leanY * 0.2;
       const sy = Math.sin(ay), cy = Math.cos(ay), sx = Math.sin(ax), cx = Math.cos(ax);
-      const R = Math.min(Math.max(w, h) * 0.4, 820), ox = w * 0.5, oy = h * 0.52, D = 3;
+      // Desktop: centred behind the content column, away from the identity sheet's text.
+      const R = Math.min(Math.max(w, h) * 0.4, 820), ox = w * (w >= 1024 ? 0.62 : 0.5), oy = h * 0.52, D = 3;
       const P = layers.map((col) => col.map((n) => {
         const x1 = n.x * cy + n.z * sy, z1 = -n.x * sy + n.z * cy;
         const y2 = n.y * cx - z1 * sx, z2 = n.y * sx + z1 * cx;
@@ -107,21 +108,21 @@ export default function Field() {
       const paths = Array.from({ length: BUCKETS }, () => new Path2D());
       for (const e of edges) {
         const a = P[e.l][e.i], b = P[e.l + 1][e.j], d = (a.d + b.d) / 2;
-        const alpha = 0.04 + e.w * 0.11 + d * 0.08; // 0.04 .. 0.23
-        const path = paths[Math.min(BUCKETS - 1, Math.floor(((alpha - 0.04) / 0.19) * BUCKETS))];
+        const alpha = 0.03 + e.w * 0.08 + d * 0.06; // 0.03 .. 0.17 (quieter than Signal, Precision's restraint)
+        const path = paths[Math.min(BUCKETS - 1, Math.floor(((alpha - 0.03) / 0.14) * BUCKETS))];
         path.moveTo(a.x, a.y); path.lineTo(b.x, b.y);
       }
       ctx.lineWidth = 1;
       ctx.globalAlpha = 1;
       paths.forEach((path, i) => {
-        ctx.strokeStyle = `rgb(${ink} / ${(0.04 + ((i + 0.5) / BUCKETS) * 0.19).toFixed(3)})`;
+        ctx.strokeStyle = `rgb(${ink} / ${(0.03 + ((i + 0.5) / BUCKETS) * 0.14).toFixed(3)})`;
         ctx.stroke(path);
       });
       for (const e of edges) {
         const a = P[e.l][e.i], b = P[e.l + 1][e.j], d = (a.d + b.d) / 2;
         if (fwd >= e.l && fwd < e.l + 1) {
           const f = fwd - e.l;
-          dot(a.x + (b.x - a.x) * f, a.y + (b.y - a.y) * f, 2.2 + e.w * 1.6, accent, 0.45 + e.w * 0.55);
+          dot(a.x + (b.x - a.x) * f, a.y + (b.y - a.y) * f, 1.8 + e.w * 1.4, accent, 0.4 + e.w * 0.5);
         }
         if (bwd > e.l && bwd <= e.l + 1) {
           const f = bwd - e.l;
@@ -129,11 +130,11 @@ export default function Field() {
         }
       }
       P.forEach((col, li) => col.forEach((p, i) => {
-        dot(p.x, p.y, 3.5 + p.d * 3, `rgb(${ink})`, 0.35 + p.d * 0.5);
+        dot(p.x, p.y, 3 + p.d * 2.5, `rgb(${ink})`, 0.25 + p.d * 0.4);
         const lit = fwd >= li ? act[li][i] * Math.max(0, 1 - (fwd - li) * 0.35) : 0;
         if (lit > 0.05) {
-          dot(p.x, p.y, 3.5 + p.d * 3, accent, lit);
-          ctx.globalAlpha = lit * 0.5; ctx.strokeStyle = accent; ctx.lineWidth = 1.5;
+          dot(p.x, p.y, 3 + p.d * 2.5, accent, lit);
+          ctx.globalAlpha = lit * 0.45; ctx.strokeStyle = accent; ctx.lineWidth = 1.2;
           ctx.beginPath(); ctx.arc(p.x, p.y, 7 + lit * 6, 0, Math.PI * 2); ctx.stroke(); ctx.lineWidth = 1;
         }
       }));

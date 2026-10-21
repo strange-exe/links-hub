@@ -8,7 +8,31 @@
 - **Feeling:** modern, motion-led, professional. It must read as the same brand as abhinesh.codes.
 - **Constraints:** static export, mobile-first, WCAG 2.2 AA, initial JS within ~200 KB gzip.
 
-## Theme: Signal (chosen 2026-10-15, replaces Aurora Glass)
+## Theme: Precision (chosen 2026-10-21, replaces Signal)
+
+The user asked for "a cool and modern professional design". Following the global §1E/§1G flow, three directions
+were rendered live on the real content (`.claude/design/theme-options-v2.html`), each from a different set of
+reference DESIGN.md files in VoltAgent/awesome-design-md:
+
+| Option | References | Feel | Result |
+|---|---|---|---|
+| **1. Precision** | Linear, Vercel, Raycast | a precise developer tool | **chosen** |
+| 2. Letterhead | Mercury, Claude, Stripe | warm editorial CV, serif display, ink green | not chosen |
+| 3. Mission | SpaceX, x.ai, ClickHouse | launch control, uppercase condensed, signal orange | not chosen |
+
+A full-page demo (`.claude/design/precision-demo.html`) was approved before the build.
+
+- **Borrowed traits (no identity):** Linear's surface ladder with 1 px hairlines and no drop shadows; Vercel's
+  Geist 600 with tight negative tracking and a solid ink/white primary; Raycast's keycaps and command menu.
+- **Palette:** graphite (dark) or near-white (light) with one electric-blue accent, the same blue as Signal.
+- **Kept from Signal (user-requested features):** the looping AG monogram, the training-network background, the
+  portfolio-style travelling border on View resume, the skills strip, the QR code, the three-way colour mode,
+  and Pause.
+- **Changed from the demo, on purpose:** the demo's single-letter shortcuts (R, E) were not built: they fail
+  WCAG 2.1.4 (character key shortcuts need a way to turn them off). Ctrl/Cmd+K and the command menu cover both.
+  Buttons stay in JetBrains Mono (the portfolio's button font) rather than the demo's Geist.
+
+## Previous theme: Signal (2026-10-15 to 2026-10-21)
 
 The user called Aurora Glass "AI sloppy" (purple glow, glass, gradient hairlines, pills, icon tiles) and asked for a
 redesign with modern motion. Three static themes (Mono Terminal, Ink and Paper, Swiss Signal) were rejected for
@@ -35,37 +59,38 @@ motion mostly on interaction).
 
 ## Reading order
 
-1. Monogram, name (second line indented, muted), role, availability status
-2. **View resume** (portfolio-style outline button with a travelling blue border; opens `/resume/`) + Email (plain outline)
-3. Featured project sheet
-4. Link groups: Work, then Elsewhere
-5. Tools: copy email, QR code, colour mode, pause motion (a quiet toolbar of borderless buttons)
-6. Skills strip across the bottom (from the portfolio's About section and Revlens AI's stack)
+1. Monogram with the availability chip, name (second line muted), role
+2. Command bar (opens the command menu; Ctrl/Cmd+K anywhere)
+3. **View resume** (solid fill inside the portfolio's travelling blue border; opens `/resume/`) + Email (outline)
+4. Tools inside the identity sheet: copy email, QR code, colour mode, pause motion (quiet borderless buttons)
+5. Featured project sheet
+6. Link groups: Work, then Elsewhere (two sheets side by side from 720 px of content width)
+7. Footer (fine print, the Ctrl K hint on fine pointers) and the skills strip
 
-The **≥ 1024 px** layout is two columns: a sticky identity sheet on the left with the toolbar at the bottom of
-that column, content on the right, the skills strip full width below. Below that, it's a single column.
-On a 390 × 844 phone, the resume button sits in the first viewport.
+The **≥ 1024 px** layout is two columns: a sticky 448 px identity sheet on the left, content on the right, the
+footer and skills strip full width below. Below that, it's a single column. On a 390 × 844 phone, the resume
+button sits in the first viewport.
 
 ## Tokens
 
 | Token | Dark | Light | Role |
 |---|---|---|---|
-| `--bg` | `#0b0b0c` | `#f4f4f2` | page (graphite / bone) |
-| `--surface` | `#111113` | `#ffffff` | sheets, link rows, button fills |
-| `--raised` | `#18181b` | `#ecece8` | pressed/selected fills |
-| `--border` | `#2a2a2e` | `#dcdcd8` | sheet and row borders |
-| `--text` | `#ededed` | `#111111` | body |
-| `--muted` | `#9b9b9f` | `#55555a` | secondary text, second name line |
-| `--accent` | `#7c9cff` | `#3451d1` | signal, text-safe: labels, readouts, trace |
-| `--cta` / `--on-cta` | `#7c9cff` / `#0b0b0c` | `#111111` / `#f4f4f2` | skip link, viewer primary button |
-| `--wipe` / `--on-wipe` | `#7c9cff` / `#0b0b0c` | same | link-row hover fill and its text |
-| `--focus` | `#7c9cff` | `#3451d1` | focus ring |
-| `--status` | `#7c9cff` | `#3451d1` | availability dot (always with text) |
-| `--dot` | `237 237 237` | `17 17 17` | RGB of the network's nodes and links |
-| `--mark` | `#7c9cff` | `#3451d1` | AG monogram in the accent (7.2:1 / 6.5:1 on the sheet) |
+| `--bg` | `#08090a` | `#fafafa` | page, under a static 16 px dot grid (`--grid`) |
+| `--surface` | `#101113` | `#ffffff` | sheets, button fills |
+| `--raised` | `#16171a` | `#f1f1f2` | chips, hover and selected fills |
+| `--hair` | `#23252a` | `#e6e6e8` | decorative sheet edges and row dividers |
+| `--border` | `#6e727b` | `#8e9196` | control boundaries (3:1 on bg and surface) |
+| `--text` | `#f7f8f8` | `#171717` | body |
+| `--muted` | `#8a8f98` | `#5f6368` | secondary text, second name line |
+| `--accent` | `#7c9cff` | `#2f54eb` | signal, text-safe: labels, row bar, featured edge |
+| `--cta` / `--on-cta` | `#f7f8f8` / `#08090a` | `#171717` / `#ffffff` | View resume fill, skip link, viewer primary |
+| `--wipe` / `--on-wipe` | `#7c9cff` / `#08090a` | same | text selection, the glint on View resume's border |
+| `--focus` / `--status` / `--mark` | `#7c9cff` | `#2f54eb` | focus ring, availability dot, AG monogram |
+| `--dot` | `247 248 248` | `23 23 23` | RGB of the network's nodes and links |
 
-The end-to-end suite checks contrast from the built site, in both modes: text, muted, on-cta/cta, on-wipe/wipe,
-focus/bg, focus/surface, accent/bg, accent/surface, status/surface, mark/surface and muted/raised.
+Contrast (script, then the e2e suite on the built site): dark text/bg 18.73, muted/surface 5.81, accent/surface
+7.25, CTA 18.73; light text/bg 17.18, muted/surface 6.05, accent/surface 5.85, CTA 17.93. The suite checks text,
+muted, on-cta/cta, on-wipe/wipe, border/surface, border/bg, focus, accent, status, mark and muted/raised.
 
 ## Resume viewer (`/resume/`)
 
@@ -87,7 +112,9 @@ focus/bg, focus/surface, accent/bg, accent/surface, status/surface, mark/surface
   stack, kicker, status, buttons' labels) is 12-14. Display weight 800 with tight tracking. A test fails if the
   page renders more than six sizes or one outside the scale.
 - Space: 4 / 8 / 12 / 16 / 20 / 24 / 32 / 48 / 64 px.
-- Shape rule: sheets 14 px radius, link rows 10 px, buttons 6-8 px (the portfolio's button radius). No pills.
+- Shape rule: sheets 12 px radius, the command bar 10 px, buttons 8 px, chips and keycaps 6/4 px. No pills, no
+  drop shadows on sheets (hairlines and the surface ladder carry depth).
+- Display weight is 600 (Precision), not 800.
 
 ## Motion
 
@@ -105,12 +132,16 @@ releases `transform` for the tilt and magnet. A test fails if any entrance keyfr
   120 separate strokes halved the frame rate. Starts only once the animation clock runs; the still frame (reduced
   motion, Pause, hidden tab) shows the forward pass mid-way. `data-field` records still/running.
 - **Featured sheet:** tilts toward the pointer (up to 5 deg) with its title, stack and links shifting 2-5 px; a short
-  blue run traces its border on hover or keyboard focus.
-- **View resume:** the portfolio's outline button with a blue segment travelling round the 1 px border every 4 s
-  (a rotating conic layer, compositor-only), a 2 px lift on hover, and a magnetic lean (up to 8 / 6 px) toward a
-  nearby pointer.
-- **Link rows:** a soft blue wipe sweeps in from the left on hover or keyboard focus; the name slides 6 px and the
-  arrow turns 45 deg.
+  blue run travels round its 1 px edge every 6 s (a rotating conic layer behind a 1 px-inset fill).
+- **View resume:** a solid fill inside the portfolio's travelling border (a blue segment round the 1 px edge every
+  4 s, compositor-only), a 2 px lift on hover, and a magnetic lean (up to 8 / 6 px) toward a nearby pointer.
+- **Command bar:** types a few commands ("open resume", "email abhinesh"...) every 70 ms with a blinking caret;
+  decorative (aria-hidden), written to the DOM directly, and frozen while paused, hidden or under reduced motion.
+  Its children ignore the pointer so a redraw can't drop a click.
+- **Command menu (Ctrl/Cmd+K):** native `<dialog>` + APG combobox/listbox: 16 commands (resume, email, copy
+  email, the project, six profiles, QR code, three colour modes, pause). Copy email and the QR code run through
+  FooterTools (a `tools:run` event), so feedback stays in one place.
+- **Link rows:** a 2 px accent bar grows on hover or keyboard focus; the name slides 4 px and the arrow nudges.
 - **Monogram loop (7 s):** both letters draw together over 1.6 s at one pen speed (dash lengths 140 and 160), hold
   about 3.8 s, erase over 1 s, a 0.4 s beat, redraw. Fully drawn in the HTML; the loop class is added only once the
   clock runs. `data-draw` records the decision for tests.
@@ -154,3 +185,7 @@ releases `transform` for the tilt and magnet. A test fails if any entrance keyfr
   the AG loop, favicon and OG image.
 - 2026-10-15: Background changed from the neuron network to an ML "doodle": of three previews (training a
   network, gradient descent on a loss landscape, k-means clusters) the user chose **training a network**.
+- 2026-10-21: Redesign to **Precision** (see Theme). Removed: the blue wipe on link rows (now an accent bar), the
+  hover-only SVG trace (now the conic edge), sheet drop shadows, the indented second name line. Added: the
+  command bar and menu, the dot grid, link groups as sheets. The network is fainter and sits behind the content
+  column on desktop.

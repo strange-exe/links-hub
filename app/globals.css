@@ -1,38 +1,39 @@
 /* ---------- tokens (see design.md) ---------- */
-/* "Signal" (chosen 2026-10-15 as a mix of three motion previews): graphite + one electric-blue signal
-   (blue replaced sun yellow and the cyan monogram on 2026-10-15, user's pick of four previews).
-   --accent   text-safe signal colour (labels, focus, trace).   --cta/--on-cta  the View resume button.
-   --wipe     link-row hover fill (soft blue in both modes).      --dot  RGB of the background field's dots.
+/* "Precision" (chosen 2026-10-21 from three directions; references: Linear, Vercel, Raycast): graphite surfaces in
+   a ladder, 1 px hairlines and no drop shadows, Geist with tight tracking, one electric-blue accent.
+   --hair     decorative sheet edges and row dividers.            --border  control boundaries (3:1 on --surface).
+   --accent   text-safe signal colour (labels, focus, row bar).   --cta/--on-cta  the View resume fill.
+   --wipe     text selection highlight.                          --dot  RGB of the background network's ink.
    --status   availability dot (always beside text).             --focus  focus ring (3:1 on --bg).
    --mark     the AG monogram, in the accent (3:1+ on --surface, as a meaningful graphic). */
 :root {
   color-scheme: light;
-  --bg: #f4f4f2;
+  --bg: #fafafa;
   --surface: #ffffff;
-  --raised: #ecece8;
-  --border: #dcdcd8;
-  --text: #111111;
-  --muted: #55555a;
-  --accent: #3451d1;
-  --cta: #111111;
-  --on-cta: #f4f4f2;
+  --raised: #f1f1f2;
+  --hair: #e6e6e8;
+  --border: #8e9196;
+  --text: #171717;
+  --muted: #5f6368;
+  --accent: #2f54eb;
+  --cta: #171717;
+  --on-cta: #ffffff;
   --wipe: #7c9cff;
-  --on-wipe: #0b0b0c;
-  --focus: #3451d1;
-  --status: #3451d1;
-  --dot: 17 17 17;
-  --mark: #3451d1;
-  --shadow: 0 1px 0 rgb(17 17 17 / 0.05), 0 22px 48px -24px rgb(17 17 17 / 0.28);
-  --glass: var(--surface);
+  --on-wipe: #08090a;
+  --focus: #2f54eb;
+  --status: #2f54eb;
+  --dot: 23 23 23;
+  --grid: rgb(23 23 23 / 0.08);
+  --mark: #2f54eb;
+  --shadow: 0 1px 2px rgb(23 23 23 / 0.06), 0 12px 32px -16px rgb(23 23 23 / 0.2);
 
   --font-sans: var(--font-geist), system-ui, sans-serif;
   --font-code: var(--font-mono), ui-monospace, monospace;
-  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
-  --spring: cubic-bezier(0.34, 1.4, 0.5, 1);
 
-  /* Type scale: six steps. Mono text is xs. */
+  /* Type scale: six steps. Mono text is xs or sm. */
   --fs-xs: 12px;
   --fs-sm: 14px;
   --fs-md: 16px;
@@ -40,7 +41,8 @@
   --fs-xl: 22px;
   --fs-display: clamp(44px, 11vw, 72px);
 
-  --r-card: 14px;
+  /* Shape: sheets 12, rows and inputs 10, buttons 8, chips and keycaps 6/4. */
+  --r-card: 12px;
   --r-row: 10px;
   --r-btn: 8px;
 }
@@ -48,38 +50,42 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #0b0b0c;
-    --surface: #111113;
-    --raised: #18181b;
-    --border: #2a2a2e;
-    --text: #ededed;
-    --muted: #9b9b9f;
+    --bg: #08090a;
+    --surface: #101113;
+    --raised: #16171a;
+    --hair: #23252a;
+    --border: #6e727b;
+    --text: #f7f8f8;
+    --muted: #8a8f98;
     --accent: #7c9cff;
-    --cta: #7c9cff;
-    --on-cta: #0b0b0c;
+    --cta: #f7f8f8;
+    --on-cta: #08090a;
     --focus: #7c9cff;
     --status: #7c9cff;
-    --dot: 237 237 237;
+    --dot: 247 248 248;
+    --grid: rgb(247 248 248 / 0.06);
     --mark: #7c9cff;
-    --shadow: 0 1px 0 rgb(255 255 255 / 0.04), 0 22px 48px -24px rgb(0 0 0 / 0.9);
+    --shadow: 0 1px 0 rgb(255 255 255 / 0.04), 0 16px 32px -16px rgb(0 0 0 / 0.8);
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0b0b0c;
-  --surface: #111113;
-  --raised: #18181b;
-  --border: #2a2a2e;
-  --text: #ededed;
-  --muted: #9b9b9f;
+  --bg: #08090a;
+  --surface: #101113;
+  --raised: #16171a;
+  --hair: #23252a;
+  --border: #6e727b;
+  --text: #f7f8f8;
+  --muted: #8a8f98;
   --accent: #7c9cff;
-  --cta: #7c9cff;
-  --on-cta: #0b0b0c;
+  --cta: #f7f8f8;
+  --on-cta: #08090a;
   --focus: #7c9cff;
   --status: #7c9cff;
-  --dot: 237 237 237;
+  --dot: 247 248 248;
+  --grid: rgb(247 248 248 / 0.06);
   --mark: #7c9cff;
-  --shadow: 0 1px 0 rgb(255 255 255 / 0.04), 0 22px 48px -24px rgb(0 0 0 / 0.9);
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.04), 0 16px 32px -16px rgb(0 0 0 / 0.8);
 }
 
 /* ---------- base ---------- */
@@ -96,6 +102,11 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
+/* A faint dot grid on the page colour (static; the network moves above it). */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(var(--grid) 1px, transparent 1.2px) 0 0 / 16px 16px;
+}
 a { color: inherit; }
 ::selection { background: var(--wipe); color: var(--on-wipe); }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
@@ -109,41 +120,44 @@ a { color: inherit; }
   background: var(--cta); color: var(--on-cta); font-weight: 600; text-decoration: none;
 }
 .skip:focus-visible { top: 16px; }
+kbd {
+  display: inline-block;
+  padding: 3px 6px;
+  border: 1px solid var(--hair); border-bottom-width: 2px; border-radius: 4px;
+  background: var(--raised); color: var(--muted);
+  font: 500 var(--fs-xs)/1 var(--font-code);
+}
 
-/* ---------- background: live dot field (components/Field.tsx), decorative ---------- */
-/* Layers: 0 = field, 1 = content, 3 = skip link. All text sits on solid panels or the solid page colour. */
+/* ---------- background: the training network (components/Field.tsx), decorative ---------- */
+/* Layers: 0 = dot grid and network, 1 = content, 3 = skip link. All text sits on solid sheets or the solid page
+   colour, never on the network. */
 .field { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; }
 
 /* ---------- layout ---------- */
 .page {
   position: relative; z-index: 1;
-  max-width: 460px;
+  max-width: 480px;
   margin: 0 auto;
   padding: 24px 16px 0;
+  display: grid; gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
 }
 .identity, .content, .foot { min-width: 0; }
-.content { margin-top: 28px; }
+.content { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
 
-/* Desktop: identity sheet + toolbar on the left, content on the right, skills strip across the bottom.
-   DOM order stays identity, content, tools. */
+/* Desktop: a sticky identity sheet on the left, content on the right; footer and skills strip full width.
+   DOM order stays identity, content, footer. */
 @media (min-width: 1024px) {
   .page {
-    max-width: 1120px;
-    padding: 64px 32px 0;
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-    grid-template-areas: "identity content" "foot content";
-    grid-template-rows: auto 1fr;
-    column-gap: 80px;
+    max-width: 1160px;
+    padding: 48px 32px 0;
+    grid-template-columns: 448px minmax(0, 1fr);
+    column-gap: 24px;
     align-items: start;
   }
   /* Sticky identity (after brittanychiang.com): the name and actions stay in view while the content scrolls. */
-  .identity { grid-area: identity; position: sticky; top: 32px; }
-  .content { grid-area: content; margin-top: 0; }
-  /* Offset second line (after rauno.me's indented statement lines). */
-  .name .line + .line { margin-left: 0.5em; }
-  /* The toolbar sits at the bottom of the left column, level with the last link. */
-  .foot { grid-area: foot; align-self: end; }
+  .identity { position: sticky; top: 32px; }
+  .foot { grid-column: 1 / -1; }
 }
 
 /* ---------- motion: entrances ---------- */
@@ -154,26 +168,27 @@ a { color: inherit; }
 @media (prefers-reduced-motion: no-preference) {
   .name .ch { animation: letter 0.9s var(--ease-out) backwards; animation-delay: calc(0.2s + var(--c) * 28ms); }
   @keyframes letter { from { transform: translateY(0.32em) rotate(4deg); } }
-  .role, .status { animation: rise 0.8s var(--ease-out) 0.55s backwards; }
-  .sheet { animation: settle 1s var(--spring) backwards; animation-delay: calc(var(--i, 0) * 90ms); }
-  @keyframes settle { from { transform: translateY(24px) rotate(-1deg); } }
-  .rise { animation: rise 0.8s var(--spring) backwards; animation-delay: calc(0.2s + var(--i, 0) * 55ms); }
-  @keyframes rise { from { transform: translateY(16px); } }
+  .role, .status { animation: rise 0.8s var(--ease-out) 0.45s backwards; }
+  .sheet { animation: settle 0.8s var(--ease-out) backwards; animation-delay: calc(var(--i, 0) * 80ms); }
+  @keyframes settle { from { transform: translateY(16px); } }
+  .rise { animation: rise 0.7s var(--ease-out) backwards; animation-delay: calc(0.2s + var(--i, 0) * 55ms); }
+  @keyframes rise { from { transform: translateY(14px); } }
 }
 
-/* ---------- identity sheet ---------- */
-.identity {
-  padding: 24px;
-  border: 1px solid var(--border);
+/* ---------- sheets ---------- */
+/* Linear-style surfaces: elevation comes from the surface ladder and a 1 px hairline, not drop shadows. */
+.identity, .group {
+  border: 1px solid var(--hair);
   border-radius: var(--r-card);
   background: var(--surface);
-  box-shadow: var(--shadow);
 }
-@media (min-width: 1024px) { .identity { padding: 36px; } }
+.identity { padding: 24px; }
+@media (min-width: 1024px) { .identity { padding: 28px; } }
+@media (max-width: 520px) { .identity { padding: 20px; } }
 
 /* ---------- monogram: plain stroke, the 7 s draw/hold/erase loop ---------- */
-/* The accent blue, so the loop stands out against the neutral type. */
-.mark { display: block; width: 84px; height: 54px; color: var(--mark); }
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.mark { display: block; width: 64px; height: 41px; color: var(--mark); }
 .mark .strokes path { fill: none; stroke: currentColor; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
 @media (prefers-reduced-motion: no-preference) {
   /* Both letters draw together over 1.6 s at one pen speed (dash lengths in user units), hold, erase over 1 s
@@ -195,51 +210,75 @@ a { color: inherit; }
 
 /* ---------- identity ---------- */
 .name {
-  margin: 28px 0 0;
+  margin: 24px 0 0;
   font-size: var(--fs-display);
-  line-height: 0.98;
-  font-weight: 800;
+  line-height: 1;
+  font-weight: 600;
   letter-spacing: -0.045em;
 }
 .name .line { display: block; }
 .name .line + .line { color: var(--muted); }
 .name .ch { display: inline-block; }
-.role { margin: 20px 0 0; max-width: 40ch; color: var(--muted); font-size: var(--fs-md); line-height: 1.6; }
+.role { margin: 16px 0 0; max-width: 42ch; color: var(--muted); font-size: var(--fs-md); line-height: 1.6; }
 .status {
-  display: inline-flex; align-items: center; gap: 10px;
-  margin: 16px 0 0;
-  color: var(--text);
-  font: 400 var(--fs-xs)/1.3 var(--font-code);
+  display: inline-flex; align-items: center; gap: 8px;
+  margin: 0;
+  padding: 7px 10px;
+  border: 1px solid var(--hair); border-radius: 6px;
+  color: var(--muted);
+  font: 500 var(--fs-xs)/1.2 var(--font-code);
+  white-space: nowrap;
 }
-.dot { position: relative; width: 8px; height: 8px; flex: none; border-radius: 50%; background: var(--status); }
+.dot { position: relative; width: 6px; height: 6px; flex: none; border-radius: 50%; background: var(--status); }
 @media (prefers-reduced-motion: no-preference) {
   .dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--status); animation: ping 2.4s var(--ease-out) infinite; }
   @keyframes ping { from { transform: scale(1); opacity: 0.9; } to { transform: scale(3.2); opacity: 0; } }
   :root[data-motion="paused"] .dot::after { animation: none; opacity: 0; }
 }
 
+/* ---------- command bar (components/CommandPalette.tsx) ---------- */
+/* Opens the command menu. The typed text is decorative (aria-hidden); the button's name is "Open command menu".
+   Children ignore the pointer: the typed text redraws every 70 ms, and a redraw between mousedown and mouseup
+   would drop the click (lessons.md, 2026-10-17). */
+.cmd {
+  margin-top: 20px;
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  min-height: 44px; padding: 0 10px 0 12px;
+  border: 1px solid var(--hair); border-radius: var(--r-row);
+  background: var(--bg); color: var(--muted);
+  font: 400 var(--fs-sm)/1 var(--font-code);
+  text-align: left; cursor: pointer;
+  transition: border-color 0.2s;
+}
+.cmd > * { pointer-events: none; }
+.cmd:hover { border-color: var(--border); }
+.cmd .typed { color: var(--text); font-weight: 500; white-space: pre; }
+.cmd .caret { width: 7px; height: 16px; background: var(--accent); }
+.cmd kbd { margin-left: auto; }
+@media (prefers-reduced-motion: no-preference) {
+  .cmd .caret { animation: caret 1s steps(1) infinite; }
+  @keyframes caret { 50% { transform: scaleY(0); } }
+  :root[data-motion="paused"] .cmd .caret { animation: none; }
+}
+
 /* ---------- actions ---------- */
-.ctas { display: flex; gap: 10px; margin: 28px 0 0; }
+.ctas { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 0; }
 .cta, .pill {
-  min-height: 52px;
+  min-height: 44px;
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  padding: 0 22px;
+  padding: 0 18px;
   border-radius: var(--r-btn);
-  font: 600 var(--fs-md)/1 var(--font-sans);
+  font: 600 var(--fs-sm)/1 var(--font-code);
   text-decoration: none;
   cursor: pointer;
 }
-/* View resume, matched to the portfolio's "Download Resume" button (abhinesh.codes .btn-outline.btn-glow):
-   an outlined mono button with a file icon, a bright segment travelling round its 1 px border every 4 s, and a
-   2 px lift on hover. The portfolio animates an @property angle; here a conic layer ROTATES behind a 1 px-inset
-   fill (compositor-only), and the segment is the site's blue instead of the portfolio's cyan/violet. */
+/* View resume: a solid fill (Raycast/Vercel primary) inside the portfolio's travelling border (abhinesh.codes
+   "Download Resume" .btn-glow): a conic layer ROTATES behind a 1 px-inset fill (compositor-only). The fill is
+   its own pseudo-layer above the ring, so the label always sits on a solid colour (lessons.md, 2026-10-12). */
 .cta {
-  flex: 1;
   position: relative; isolation: isolate; overflow: hidden;
-  border-radius: 6px;
-  background: rgb(var(--dot) / 0.14); /* ring track: shows only as the 1 px edge */
-  color: var(--text);
-  font: 600 var(--fs-sm)/1 var(--font-code);
+  background: rgb(var(--dot) / 0.16); /* ring track: shows only as the 1 px edge */
+  color: var(--on-cta);
   /* Magnetic (components/PointerFx.tsx sets --mx/--my while the pointer is near) plus the hover lift. */
   transform: translate(var(--mx, 0px), calc(var(--my, 0px) - var(--lift, 0px)));
   transition: transform 0.35s var(--ease);
@@ -247,65 +286,69 @@ a { color: inherit; }
 .cta::before {
   content: ""; position: absolute; z-index: -2; pointer-events: none;
   left: 50%; top: 50%; width: 520px; height: 520px; margin: -260px 0 0 -260px; /* covers the button's diagonal */
-  background: conic-gradient(transparent 0deg 250deg, var(--wipe) 300deg, var(--text) 330deg, transparent 360deg);
+  background: conic-gradient(transparent 0deg 250deg, var(--wipe) 300deg, var(--accent) 330deg, transparent 360deg);
   will-change: transform;
 }
 .cta::after {
-  content: ""; position: absolute; inset: 1px; z-index: -1; border-radius: 5px; pointer-events: none;
-  background: var(--surface); /* the identity sheet's colour, so the button reads as cut from it */
-  transition: background-color 0.2s var(--ease-out);
+  content: ""; position: absolute; inset: 1px; z-index: -1; border-radius: 7px; pointer-events: none;
+  background: var(--cta);
 }
 .cta:hover { --lift: 2px; }
-.cta:hover::after { background: var(--raised); }
 .cta:active { --lift: 0px; }
 @media (prefers-reduced-motion: no-preference) {
   .cta::before { animation: orbit 4s linear infinite; }
   @keyframes orbit { to { transform: rotate(360deg); } }
   :root[data-motion="paused"] .cta::before { animation-play-state: paused; }
 }
-/* Secondary actions: the portfolio's plain outline buttons (mono, like every button there). */
+/* Secondary actions: plain outline buttons. */
 .pill {
   border: 1px solid var(--border);
-  border-radius: 6px;
   background: var(--surface);
   color: var(--text);
-  font: 600 var(--fs-sm)/1 var(--font-code);
-  transition: border-color 0.3s;
+  transition: border-color 0.2s, transform 0.2s var(--ease);
 }
-.tools .pill.small { font-family: var(--font-sans); }
 .pill:hover { border-color: var(--text); }
-.pill.small { min-height: 40px; padding: 0 12px; font-size: var(--fs-sm); font-weight: 500; }
+.pill.small { min-height: 36px; padding: 0 10px; font-size: var(--fs-xs); font-weight: 500; }
 :root[data-motion="paused"] .cta { transform: none; }
 
 /* ---------- featured sheet ---------- */
-/* .shell carries the pointer tilt (PointerFx sets --tx/--ty from -1 to 1); .feat is the sheet. */
+/* .shell carries the pointer tilt (PointerFx sets --tx/--ty from -1 to 1); .feat is the sheet. A short run of
+   the accent travels round its 1 px edge: a conic layer rotates behind a 1 px-inset surface fill. */
 .shell { position: relative; }
 .feat {
-  position: relative;
+  position: relative; isolation: isolate; overflow: hidden;
   padding: 24px;
-  border: 1px solid var(--border);
   border-radius: var(--r-card);
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  background: var(--hair); /* the edge colour; the ::after fill covers all but 1 px */
 }
-.feat .kicker { margin: 0 0 10px; font: 400 var(--fs-xs)/1.3 var(--font-code); color: var(--accent); }
-.feat h2 { margin: 0 0 6px; font-size: var(--fs-xl); line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; }
-.feat p { margin: 0; color: var(--muted); font-size: var(--fs-sm); line-height: 1.6; }
-.stack { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 12px 0 0; padding: 0; list-style: none; color: var(--muted); font: 400 var(--fs-xs)/1.6 var(--font-code); }
+.feat::before {
+  content: ""; position: absolute; z-index: -2; pointer-events: none;
+  left: 50%; top: 50%; width: 1400px; height: 1400px; margin: -700px 0 0 -700px;
+  background: conic-gradient(transparent 0deg 300deg, var(--accent) 340deg, transparent 352deg);
+  will-change: transform;
+}
+.feat::after {
+  content: ""; position: absolute; inset: 1px; z-index: -1; border-radius: 11px; pointer-events: none;
+  background: var(--surface);
+}
+.feat .kicker { margin: 0 0 12px; font: 500 var(--fs-xs)/1.3 var(--font-code); color: var(--accent); }
+.feat h2 { margin: 0 0 6px; font-size: var(--fs-xl); line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; }
+.feat p { margin: 0; color: var(--muted); font-size: var(--fs-sm); line-height: 1.6; max-width: 60ch; }
+.stack { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; padding: 0; list-style: none; }
+.stack li { padding: 6px 8px; border-radius: 6px; background: var(--raised); color: var(--muted); font: 400 var(--fs-xs)/1 var(--font-code); }
 .feat-links { display: flex; gap: 20px; margin-top: 14px; }
 .feat-links a {
   min-height: 32px;
-  display: inline-flex; align-items: center; gap: 4px;
-  font-weight: 600; font-size: var(--fs-sm);
-  text-underline-offset: 4px;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-weight: 500; font-size: var(--fs-sm);
+  text-decoration: none;
 }
-.feat-links svg { transition: transform 0.45s var(--ease-io); }
-.feat-links a:hover svg { transform: rotate(45deg); }
-/* Border trace: a short run of the signal colour travels round the sheet on hover or keyboard focus. */
-.trace { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); pointer-events: none; overflow: visible; }
-.trace rect { width: calc(100% - 1.5px); height: calc(100% - 1.5px); fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 0.12 0.88; opacity: 0; transition: opacity 0.3s; }
-.feat:hover .trace rect, .feat:focus-within .trace rect { opacity: 1; }
+.feat-links a:hover { color: var(--accent); }
+.feat-links svg { transition: transform 0.25s var(--ease); }
+.feat-links a:hover svg { transform: translate(2px, -2px); }
 @media (prefers-reduced-motion: no-preference) {
+  .feat::before { animation: orbit 6s linear infinite; }
+  :root[data-motion="paused"] .feat::before { animation: none; }
   .tilt {
     transform: perspective(1000px) rotateX(calc(var(--ty, 0) * -4deg)) rotateY(calc(var(--tx, 0) * 5deg));
     transition: transform 0.6s var(--ease);
@@ -313,116 +356,145 @@ a { color: inherit; }
   .tilt .feat h2, .tilt .feat .stack, .tilt .feat-links { transition: transform 0.6s var(--ease); }
   .tilt .feat h2 { transform: translate(calc(var(--tx, 0) * 5px), calc(var(--ty, 0) * 3px)); }
   .tilt .feat .stack, .tilt .feat-links { transform: translate(calc(var(--tx, 0) * 3px), calc(var(--ty, 0) * 2px)); }
-  .trace rect { animation: trace 3.2s linear infinite; }
-  @keyframes trace { to { stroke-dashoffset: -1; } }
   :root[data-motion="paused"] .tilt,
   :root[data-motion="paused"] .tilt .feat h2,
   :root[data-motion="paused"] .tilt .feat .stack,
   :root[data-motion="paused"] .tilt .feat-links { transform: none; }
-  :root[data-motion="paused"] .trace rect { animation: none; }
 }
 
 /* ---------- link groups ---------- */
-.group { margin-top: 28px; }
-.group-h { display: inline-block; margin: 0 0 10px; padding: 2px 6px 2px 0; background: var(--bg); font: 400 var(--fs-xs)/1 var(--font-code); color: var(--muted); }
+#links { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 720px) { #links { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.group { padding: 6px 12px; }
+.group-h { margin: 10px 8px 4px; font: 500 var(--fs-xs)/1 var(--font-code); color: var(--muted); }
 /* minmax(0, 1fr) lets rows shrink below their content width so long handles ellipsize at 320 px. */
-.links { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.links { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
+.links li + li { border-top: 1px solid var(--hair); }
 .link {
-  position: relative; isolation: isolate; overflow: hidden;
-  min-height: 54px;
-  display: flex; align-items: center; gap: 14px;
-  padding: 0 16px;
-  border: 1px solid var(--border);
-  border-radius: var(--r-row);
-  background: var(--surface);
+  position: relative;
+  min-height: 48px;
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 8px;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
 }
-/* Ink wipe: the soft blue sweeps in from the left on hover or keyboard focus; text flips to dark on it. */
+/* A 2 px accent bar grows on hover or keyboard focus; the arrow nudges toward the destination. */
 .link::before {
-  content: ""; position: absolute; inset: 0; z-index: -1;
-  background: var(--wipe);
-  transform: scaleX(0); transform-origin: left;
-  transition: transform 0.45s var(--ease-io);
+  content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform 0.25s var(--ease);
 }
-.link:hover, .link:focus-visible { color: var(--on-wipe); border-color: var(--wipe); }
-.link:hover::before, .link:focus-visible::before { transform: scaleX(1); }
-.lname { transition: transform 0.45s var(--ease-io); }
-.link:hover .lname, .link:focus-visible .lname { transform: translateX(6px); }
+.link:hover::before, .link:focus-visible::before { transform: scaleY(1); }
+.lname { transition: transform 0.25s var(--ease); }
+.link:hover .lname, .link:focus-visible .lname { transform: translateX(4px); }
 .handle {
   margin-left: auto; min-width: 0;
   color: var(--muted);
   font: 400 var(--fs-xs)/1 var(--font-code);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.link:hover .handle, .link:focus-visible .handle { color: var(--on-wipe); }
-.go { flex: none; color: var(--muted); transition: transform 0.45s var(--ease-io); }
-.link:hover .go, .link:focus-visible .go { color: var(--on-wipe); transform: rotate(45deg); }
+.go { flex: none; color: var(--muted); transition: transform 0.25s var(--ease), color 0.25s; }
+.link:hover .go, .link:focus-visible .go { color: var(--accent); transform: translate(2px, -2px); }
 
-/* ---------- tools ---------- */
+/* ---------- tools (inside the identity sheet) ---------- */
 /* A quiet toolbar of borderless buttons so utilities never compete with View resume and Email. */
-.tools { margin-top: 28px; }
-.tool-row { display: flex; flex-wrap: wrap; gap: 4px; }
-.tools .pill.small, .tools .motion, .tools .modes { border-color: transparent; background: transparent; }
-.tools .pill.small { color: var(--muted); }
-.tools .pill.small:hover, .tools .motion:hover { border-color: var(--border); background: var(--surface); color: var(--text); }
+.tools { margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--hair); }
+.tool-row, .prefs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.prefs { margin-top: 4px; }
+.tools .pill.small { border-color: transparent; background: transparent; color: var(--muted); }
+.tools .pill.small:hover { background: var(--raised); color: var(--text); }
 .toast:empty { min-height: 0; margin: 0; }
-.toast { min-height: 20px; margin: 8px 0 0; font: 400 var(--fs-xs)/1.4 var(--font-code); color: var(--status); }
+.toast { min-height: 20px; margin: 6px 4px 0; font: 400 var(--fs-xs)/1.4 var(--font-code); color: var(--status); }
 .toast[data-kind="error"] { color: var(--text); }
-.prefs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin-top: 2px; }
-.modes { display: inline-flex; padding: 3px; gap: 2px; border: 1px solid var(--border); border-radius: var(--r-btn); }
+.modes { display: inline-flex; padding: 3px; gap: 2px; border: 1px solid var(--hair); border-radius: var(--r-btn); }
 .modes button, .motion {
-  min-height: 36px; min-width: 44px; padding: 0 12px;
+  min-height: 32px; min-width: 44px; padding: 0 10px;
   border: 0; border-radius: 6px;
   background: transparent; color: var(--muted);
-  font: 500 var(--fs-sm)/1 var(--font-sans);
+  font: 500 var(--fs-xs)/1 var(--font-code);
   cursor: pointer;
 }
+.modes button:hover, .motion:hover { color: var(--text); }
 .modes button[aria-pressed="true"] { background: var(--raised); color: var(--text); }
-.motion { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; border: 1px solid var(--border); }
+.motion { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; }
 .motion[aria-pressed="true"] { color: var(--text); }
-.fine { margin: 12px 0 0; color: var(--muted); font-size: var(--fs-sm); }
-/* The toolbar and footnote sit straight on the page: give them the page colour so the field never runs under text. */
-.foot .tools, .foot .fine { background: var(--bg); }
+
+/* ---------- footer ---------- */
+.foot {
+  display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; align-items: center;
+  padding: 12px 14px;
+  border-radius: var(--r-btn);
+  background: var(--bg); /* solid, so the network never runs under the text */
+  color: var(--muted);
+  font: 400 var(--fs-xs)/1.6 var(--font-code);
+}
+.fine { margin: 0; }
+.fine a { text-underline-offset: 3px; }
+.hint { margin: 0; }
+/* Touch screens have no Ctrl K: the hint would only be noise there (the command bar still opens the menu). */
+@media (pointer: coarse) { .hint, .cmd kbd { display: none; } }
 
 /* ---------- skills strip ---------- */
 /* The list is read once by screen readers; the moving copy is aria-hidden. Pause stops it (WCAG 2.2.2). */
 .ticker {
   position: relative; z-index: 1;
-  margin-top: 48px;
-  padding: 14px 0;
-  border-block: 1px solid var(--border);
-  background: var(--bg);
+  margin-top: 32px;
+  border-block: 1px solid var(--hair);
+  background: var(--surface);
   overflow: hidden; white-space: nowrap;
   font: 400 var(--fs-xs)/1 var(--font-code);
   color: var(--muted);
 }
 .ticker ul { display: inline-flex; margin: 0; padding: 0; list-style: none; }
-.ticker li { padding: 0 14px; }
-.ticker li::after { content: "/"; margin-left: 28px; color: var(--border); }
+.ticker li { padding: 14px 20px; }
+.ticker li::before { content: "+"; margin-right: 10px; color: var(--accent); }
 .ticker .run { display: inline-flex; }
 @media (prefers-reduced-motion: no-preference) {
-  .ticker .run { animation: ticker 32s linear infinite; }
+  .ticker .run { animation: ticker 36s linear infinite; }
   @keyframes ticker { to { transform: translateX(-50%); } }
   :root[data-motion="paused"] .ticker .run { animation-play-state: paused; }
 }
 
-/* ---------- QR dialog ---------- */
-.qr-dialog {
-  width: min(340px, calc(100vw - 32px));
-  padding: 24px;
-  border: 1px solid var(--border);
+/* ---------- dialogs: QR code and command menu ---------- */
+.qr-dialog, .palette {
+  border: 1px solid var(--hair);
   border-radius: var(--r-card);
   background: var(--surface);
   color: var(--text);
-  text-align: center;
 }
-.qr-dialog::backdrop { background: rgb(0 0 0 / 0.6); }
-.qr-dialog h2 { margin: 0 0 16px; font-size: var(--fs-lg); font-weight: 700; }
+.qr-dialog::backdrop, .palette::backdrop { background: rgb(0 0 0 / 0.55); }
+.qr-dialog { width: min(340px, calc(100vw - 32px)); padding: 24px; text-align: center; }
+.qr-dialog h2 { margin: 0 0 16px; font-size: var(--fs-lg); font-weight: 600; }
 .qr-frame { display: inline-block; padding: 12px; background: #ffffff; border-radius: 10px; }
 .qr-frame img { display: block; width: 220px; height: 220px; }
 .qr-url { margin: 12px 0 16px; font: 400 var(--fs-sm)/1.4 var(--font-code); }
 .qr-dialog .pill { width: 100%; }
+
+/* Command menu: native <dialog> (focus containment and Escape) holding a WAI-ARIA APG combobox and listbox. */
+.palette { width: min(560px, calc(100vw - 32px)); padding: 0; margin-top: 14vh; }
+.palette-in { display: flex; align-items: center; gap: 10px; padding: 0 14px; border-bottom: 1px solid var(--hair); color: var(--muted); }
+.palette-in:focus-within { box-shadow: inset 0 -2px 0 var(--accent); }
+.palette input {
+  flex: 1; min-width: 0; min-height: 52px;
+  border: 0; background: transparent; color: var(--text);
+  font: 400 var(--fs-md)/1 var(--font-sans);
+}
+.palette input:focus { outline: none; }
+.palette input::placeholder { color: var(--muted); opacity: 1; }
+.palette [role="listbox"] { max-height: min(340px, 50vh); overflow: auto; margin: 0; padding: 6px; list-style: none; }
+.palette [role="option"] {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center;
+  min-height: 44px; padding: 0 12px;
+  border-radius: var(--r-btn);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.palette [role="option"] .detail { color: var(--muted); font: 400 var(--fs-xs)/1 var(--font-code); }
+.palette [role="option"][aria-selected="true"] { background: var(--raised); box-shadow: inset 2px 0 0 var(--accent); }
+.palette .empty { padding: 16px 12px; color: var(--muted); font-size: var(--fs-sm); }
+.palette-hint { display: flex; gap: 16px; margin: 0; padding: 10px 14px; border-top: 1px solid var(--hair); color: var(--muted); font: 400 var(--fs-xs)/1 var(--font-code); }
+@media (pointer: coarse) { .palette-hint { display: none; } }
 
 /* ---------- resume viewer (app/resume) ---------- */
 /* Telemetry-style chrome (mono uppercase readouts, bracketed title) on the site's flat sheets. */
@@ -432,7 +504,7 @@ a { color: inherit; }
   position: sticky; top: 0; z-index: 2;
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px;
   padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--hair);
   background: var(--bg);
 }
 .viewer-title {
@@ -445,7 +517,7 @@ a { color: inherit; }
 .scramble { white-space: pre; }
 .viewer-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .readout { font: 500 var(--fs-xs)/1.3 var(--font-code); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.zoom { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: 1px solid var(--border); border-radius: var(--r-btn); background: var(--surface); }
+.zoom { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: 1px solid var(--hair); border-radius: var(--r-btn); background: var(--surface); }
 .zoom-level { min-width: 48px; text-align: center; color: var(--text); }
 .vbtn {
   min-height: 44px; min-width: 44px;
@@ -453,9 +525,9 @@ a { color: inherit; }
   padding: 0 14px;
   border: 1px solid var(--border); border-radius: var(--r-btn);
   background: var(--surface); color: var(--text);
-  font: 600 var(--fs-sm)/1 var(--font-sans); text-decoration: none;
+  font: 500 var(--fs-sm)/1 var(--font-sans); text-decoration: none;
   cursor: pointer;
-  transition: border-color 0.3s, transform 0.5s var(--ease);
+  transition: border-color 0.2s, transform 0.3s var(--ease);
 }
 .vbtn:hover:not(:disabled) { border-color: var(--text); }
 .vbtn:active:not(:disabled) { transform: scale(0.97); }
@@ -474,7 +546,7 @@ a { color: inherit; }
   display: block; max-width: none;
   background: #ffffff;
   border-radius: 4px;
-  box-shadow: 0 0 0 1px var(--border), var(--shadow);
+  box-shadow: 0 0 0 1px var(--hair), var(--shadow);
 }
 .pdf-skeleton {
   max-width: 100%; aspect-ratio: 1 / 1.414;
@@ -487,13 +559,13 @@ a { color: inherit; }
 }
 .viewer-error {
   max-width: 440px; margin: 12vh auto 0; padding: 24px;
-  border: 1px solid var(--border); border-radius: var(--r-card); background: var(--surface);
+  border: 1px solid var(--hair); border-radius: var(--r-card); background: var(--surface);
 }
 .viewer-error p { margin: 0 0 12px; }
 .viewer-error .readout { color: var(--accent); }
 .viewer-error-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .viewer-foot { margin: 0; }
-.viewer-foot a { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; font-weight: 600; font-size: var(--fs-sm); text-underline-offset: 4px; }
+.viewer-foot a { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; font-weight: 500; font-size: var(--fs-sm); text-underline-offset: 4px; }
 .viewer-noscript { margin: 24px 16px; }
 /* Phones: two rows. Row 1 = back + title, row 2 = page readout, zoom, download (icon-only, named via aria-label). */
 @media (max-width: 560px) {

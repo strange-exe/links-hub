@@ -106,7 +106,9 @@ for (const scheme of ["light", "dark"] as const) {
         ["--muted", "--surface", 4.5],
         ["--text", "--raised", 4.5],
         ["--on-cta", "--cta", 4.5], // skip link and the viewer's primary button
-        ["--on-wipe", "--wipe", 4.5], // link row text on the blue hover fill
+        ["--on-wipe", "--wipe", 4.5], // selected text on the selection highlight
+        ["--border", "--surface", 3], // control boundaries (Email, the colour-mode group's buttons)
+        ["--border", "--bg", 3],
         ["--focus", "--bg", 3], // focus ring
         ["--focus", "--surface", 3],
         ["--accent", "--bg", 4.5], // signal labels and readouts
@@ -150,12 +152,13 @@ const field = (page: Page) => page.getByTestId("field");
 
 test("reduced motion: nothing animates and the pause button is hidden", async ({ page }) => {
   await openIn(page, { reducedMotion: "reduce" });
-  const names = await page.evaluate(() =>
-    [".name .ch", ".sheet", ".links .rise", ".dot", ".ticker .run", ".trace rect"].map(
+  const names = await page.evaluate(() => [
+    ...[".name .ch", ".sheet", ".links .rise", ".ticker .run", ".cmd .caret"].map(
       (s) => getComputedStyle(document.querySelector(s)!).animationName,
     ),
-  );
-  expect(names).toEqual(["none", "none", "none", "none", "none", "none"]);
+    ...[".dot", ".feat", ".cta"].map((s) => getComputedStyle(document.querySelector(s)!, s === ".dot" ? "::after" : "::before").animationName),
+  ]);
+  expect(names).toEqual(["none", "none", "none", "none", "none", "none", "none", "none"]);
   await expect(page.locator(".mark[data-draw]")).toHaveAttribute("data-draw", "skip-motion"); // no draw loop either
   await expect(field(page)).toHaveAttribute("data-field", "still"); // the network is drawn once, not animated
   await expect(page.getByRole("button", { name: "Pause background animation" })).toBeHidden();
@@ -319,12 +322,12 @@ test("colour mode toggle overrides the system and persists", async ({ page }) =>
   await expect(group.getByRole("button", { name: "System" })).toHaveAttribute("aria-pressed", "true");
   await group.getByRole("button", { name: "Dark" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(11, 11, 12)");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(8, 9, 10)");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(page.getByRole("group", { name: "Colour mode" }).getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("group", { name: "Colour mode" }).getByRole("button", { name: "System" }).click();
-  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(244, 244, 242)");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(250, 250, 250)");
 });
 
 test("copy email: success message", async ({ page, context }, info) => {
@@ -414,14 +417,18 @@ test("status: real text immediately, dot hidden from assistive tech", async ({ p
   await expect(status.locator(".dot")).toHaveAttribute("aria-hidden", "true");
 });
 
-test("link rows: blue wipe on hover and on keyboard focus, text stays readable on it", async ({ page }) => {
+test("link rows: an accent bar grows on hover and on keyboard focus", async ({ page }) => {
   await openIn(page, { colorScheme: "dark", reducedMotion: "no-preference" });
   const link = page.getByRole("link", { name: /GitHub/ });
-  const wipe = () => link.evaluate((el) => getComputedStyle(el, "::before").transform);
-  expect(await wipe()).toMatch(/^matrix\(0, /); // scaleX(0) at rest
+  const bar = () => link.evaluate((el) => getComputedStyle(el, "::before").transform);
+  expect(await bar()).toBe("matrix(1, 0, 0, 0, 0, 0)"); // scaleY(0) at rest
   await link.hover();
-  await expect.poll(wipe).toBe("matrix(1, 0, 0, 1, 0, 0)");
-  await expect(link).toHaveCSS("color", "rgb(11, 11, 12)"); // --on-wipe on the blue fill
+  await expect.poll(bar).toBe("matrix(1, 0, 0, 1, 0, 0)");
+  expect(await link.evaluate((el) => getComputedStyle(el, "::before").backgroundColor)).toBe("rgb(124, 156, 255)");
+  await page.mouse.move(0, 0);
+  await expect.poll(bar).toBe("matrix(1, 0, 0, 0, 0, 0)");
+  await link.focus();
+  await expect.poll(bar).toBe("matrix(1, 0, 0, 1, 0, 0)");
 });
 
 test("View resume leans toward a nearby pointer and Pause turns that off", async ({ page }) => {
@@ -454,15 +461,99 @@ test("type uses one scale: at most six distinct font sizes on the page", async (
   for (const s of sizes) expect([12, 14, 16, 18, 22, 72], `unexpected ${s}px`).toContain(s);
 });
 
-test("desktop: the toolbar ends level with the last link, not under the resume button", async ({ page }) => {
+test("desktop: the toolbar sits inside the identity sheet, below the actions", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
   await animationsDone(page);
-  const foot = (await page.locator(".foot").boundingBox())!;
-  const links = (await page.locator("#links").boundingBox())!;
+  await expect(page.locator(".identity .tools")).toHaveCount(1);
+  const tools = (await page.locator(".tools").boundingBox())!;
   const ctas = (await page.locator(".ctas").boundingBox())!;
-  expect(Math.abs(foot.y + foot.height - (links.y + links.height))).toBeLessThanOrEqual(4);
-  expect(foot.y).toBeGreaterThan(ctas.y + ctas.height + 40);
+  expect(tools.y).toBeGreaterThan(ctas.y + ctas.height);
+  await expect(page.locator(".tools")).toBeInViewport({ ratio: 1 });
+});
+
+test.describe("command menu", () => {
+  const menu = (page: Page) => page.getByRole("dialog", { name: "Command menu" });
+  const box = (page: Page) => page.getByRole("combobox", { name: "Search commands" });
+  const opener = (page: Page) => page.getByRole("button", { name: "Open command menu" });
+
+  test("Ctrl+K opens it, typing filters, arrows move, Enter opens the resume", async ({ page }) => {
+    await page.goto("/");
+    await expect(opener(page)).toHaveAttribute("aria-keyshortcuts", "Control+K Meta+K");
+    await page.keyboard.press("Control+k");
+    await expect(menu(page)).toBeVisible();
+    await expect(box(page)).toBeFocused();
+    await expect(page.getByRole("option")).toHaveCount(16);
+    await box(page).fill("git");
+    await expect(page.getByRole("option")).toHaveText([/^GitHubstrange-exe$/]);
+    await box(page).fill("");
+    await expect(box(page)).toHaveAttribute("aria-activedescendant", "cmd-0");
+    await page.keyboard.press("ArrowDown");
+    await expect(box(page)).toHaveAttribute("aria-activedescendant", "cmd-1");
+    await expect(page.locator("#cmd-1")).toHaveAttribute("aria-selected", "true");
+    await page.keyboard.press("ArrowUp");
+    await page.keyboard.press("ArrowUp"); // wraps to the last option
+    await expect(box(page)).toHaveAttribute("aria-activedescendant", "cmd-15");
+    await page.keyboard.press("Home");
+    await page.keyboard.press("Enter"); // "Open resume"
+    await expect(page).toHaveURL(/\/resume\/$/);
+  });
+
+  test("empty state, Escape closes, focus returns to the command bar", async ({ page }) => {
+    await page.goto("/");
+    await opener(page).focus();
+    await page.keyboard.press("Enter");
+    await expect(menu(page)).toBeVisible();
+    await box(page).fill("zzzz");
+    await expect(page.getByRole("option")).toHaveText(["No match. Try resume, email or GitHub."]);
+    await expect(box(page)).not.toHaveAttribute("aria-activedescendant", /.*/);
+    await page.keyboard.press("Escape");
+    await expect(menu(page)).toBeHidden();
+    await expect(opener(page)).toBeFocused();
+    await page.keyboard.press("Control+k");
+    await page.keyboard.press("Control+k"); // toggles closed
+    await expect(menu(page)).toBeHidden();
+  });
+
+  test("actions run through the page's own tools: theme and copy email", async ({ page }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, "clipboard", { value: { writeText: () => Promise.reject(new Error("denied")) } });
+    });
+    await openIn(page, { colorScheme: "light" });
+    await page.keyboard.press("Control+k");
+    await box(page).fill("theme: dark");
+    await page.keyboard.press("Enter");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await expect(menu(page)).toBeHidden();
+    await page.keyboard.press("Control+k");
+    await box(page).fill("copy");
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("status")).toHaveText("Couldn't copy. The address is work.abhinesh@gmail.com");
+  });
+
+  test("open menu passes axe in both modes", async ({ page }) => {
+    for (const scheme of ["light", "dark"] as const) {
+      await openIn(page, { colorScheme: scheme, reducedMotion: "reduce" });
+      await page.keyboard.press("Control+k");
+      await expect(menu(page)).toBeVisible();
+      const axe = await new AxeBuilder({ page }).include(".palette").withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+      expect(axe.violations.map((v) => `${scheme} ${v.id}: ${v.nodes.length}`)).toEqual([]);
+    }
+  });
+
+  test("the typed text is decorative and stops when motion is paused", async ({ page }) => {
+    await openIn(page, { reducedMotion: "no-preference" });
+    await expect(page.locator(".cmd .typed")).toHaveAttribute("aria-hidden", "true");
+    // It changes while motion runs...
+    const first = await page.locator(".cmd .typed").textContent();
+    await expect.poll(() => page.locator(".cmd .typed").textContent(), { timeout: 6_000 }).not.toBe(first);
+    // ...and freezes once paused.
+    await page.getByRole("button", { name: "Pause background animation" }).click();
+    const frozen = await page.locator(".cmd .typed").textContent();
+    await page.waitForTimeout(600);
+    expect(await page.locator(".cmd .typed").textContent()).toBe(frozen);
+    await page.getByRole("button", { name: "Pause background animation" }).click();
+  });
 });
 
 // Unrotated: the matrix's rotation terms are identity. perspective() alone still adds a depth term (m34), so a

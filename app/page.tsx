@@ -1,5 +1,6 @@
 import { ArrowUpRightIcon, EnvelopeSimpleIcon, FileTextIcon } from "@phosphor-icons/react/ssr";
 import type { CSSProperties } from "react";
+import CommandPalette from "@/components/CommandPalette";
 import Field from "@/components/Field";
 import FooterTools from "@/components/FooterTools";
 import Monogram from "@/components/Monogram";
@@ -41,15 +42,18 @@ export default function Page() {
 
       <main className="page">
         <header className="identity sheet" style={at(0)}>
-          <Monogram />
+          <div className="top">
+            <Monogram />
+            <p className="status">
+              <span className="dot" aria-hidden="true" />
+              {profile.status}
+            </p>
+          </div>
           <KineticName name={profile.name} />
           <p className="role">
             {profile.role}, {profile.location.split(",")[0]}. {profile.tagline}
           </p>
-          <p className="status">
-            <span className="dot" aria-hidden="true" />
-            {profile.status}
-          </p>
+          <CommandPalette />
           <div className="ctas">
             {/* Opens the in-site viewer (app/resume). A plain <a>, not next/link: the static export's
                 nested RSC prefetch file names 404 on plain hosts (__next.resume.__PAGE__.txt). */}
@@ -62,14 +66,12 @@ export default function Page() {
               Email
             </a>
           </div>
+          <FooterTools />
         </header>
 
         <div className="content">
           <section className="shell tilt sheet" style={at(1)} aria-labelledby="feat-h">
             <div className="feat">
-              <svg className="trace" aria-hidden="true" focusable="false">
-                <rect x="0.75" y="0.75" rx="14" pathLength="1" />
-              </svg>
               {/* Comment-style label, as on abhinesh.codes */}
               <p className="kicker">{"// featured project"}</p>
               <h2 id="feat-h">{featured.title}</h2>
@@ -92,7 +94,7 @@ export default function Page() {
 
           <nav id="links" aria-label="Profiles">
             {groups.map((group, gi) => (
-              <section className="group" key={group.title} aria-labelledby={`g-${group.title}`}>
+              <section className="group sheet" style={at(2 + gi)} key={group.title} aria-labelledby={`g-${group.title}`}>
                 <h2 className="group-h" id={`g-${group.title}`}>
                   {group.title}
                 </h2>
@@ -113,9 +115,11 @@ export default function Page() {
         </div>
 
         <footer className="foot">
-          <FooterTools />
           <p className="fine">
             © {new Date().getFullYear()} {profile.name}. More work at <a href={profile.portfolio}>abhinesh.codes</a>
+          </p>
+          <p className="hint">
+            Press <kbd>Ctrl K</kbd> for commands
           </p>
         </footer>
       </main>
