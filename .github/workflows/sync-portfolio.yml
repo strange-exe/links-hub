@@ -1,0 +1,66 @@
+# Keeps the featured card in step with the portfolio. Every hour this copies the first pinned project from
+# abhinesh.codes/projects.json into lib/featured.json; when it changed, it checks the build and commits, and that
+# push makes Cloudflare Workers Builds redeploy. Pick the project at abhinesh.codes/pick/.
+# A push made with GITHUB_TOKEN doesn't start other workflows, so this starts CI itself (workflow_dispatch is the
+# exception): https://docs.github.com/en/actions/concepts/security/github_token
+name: Sync portfolio
+
+on:
+  schedule:
+    - cron: "17 * * * *" # hourly; off the hour, when GitHub's scheduler is busiest
+  workflow_dispatch:
+
+permissions:
+  contents: write # commit lib/featured.json
+  actions: write # start ci.yml
+
+concurrency:
+  group: sync-portfolio
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Copy the featured project
+        id: sync
+        run: |
+          node scripts/sync-portfolio.mjs
+          if git diff --quiet -- lib/featured.json; then echo "changed=false" >> "$GITHUB_OUTPUT"; else echo "changed=true" >> "$GITHUB_OUTPUT"; fi
+
+      # Only ship a change that builds: Cloudflare would otherwise deploy whatever lands on main.
+      - name: Check the build
+        if: steps.sync.outputs.changed == 'true'
+        run: |
+          npm ci
+          npm run lint
+          npm run typecheck
+          npm run test:unit
+          npm run build
+
+      - name: Commit
+        if: steps.sync.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lib/featured.json
+          git commit -m "chore: sync featured project from abhinesh.codes"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            echo "Push attempt $attempt failed, retrying"
+            sleep $((attempt * 5))
+          done
+          exit 1
+
+      - name: Run CI on the new commit
+        if: steps.sync.outputs.changed == 'true'
+        run: gh workflow run ci.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}

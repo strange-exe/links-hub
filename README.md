@@ -24,6 +24,13 @@ self-drawing AG monogram. It's built with Next.js and exported as static files, 
 
 All text and links live in [`lib/profile.ts`](lib/profile.ts). Design tokens and decisions are in [`design.md`](design.md).
 
+Two things follow the portfolio instead, so they never need editing here:
+- **Featured project:** the first project pinned on abhinesh.codes (choose it at `abhinesh.codes/pick/`).
+  [`sync-portfolio.yml`](.github/workflows/sync-portfolio.yml) copies it into [`lib/featured.json`](lib/featured.json)
+  every hour and commits when it changed, which redeploys the site. Run it now from the Actions tab
+  (Sync portfolio, Run workflow), or locally with `npm run sync`.
+- **Resume:** the viewer loads `abhinesh.codes/resume.pdf`, which the portfolio's build prints.
+
 ## Scripts
 
 | Command | What it does |
@@ -33,6 +40,8 @@ All text and links live in [`lib/profile.ts`](lib/profile.ts). Design tokens and
 | `npm run preview` | Serves `out/` at http://127.0.0.1:4173 |
 | `npm run lint` / `npm run typecheck` | ESLint (Next.js core-web-vitals + TypeScript) and `tsc` |
 | `npm run test:e2e` | Playwright against the built `out/` in Chromium, Firefox and WebKit (run `build` first) |
+| `npm run test:unit` | Node tests for the portfolio sync (`scripts/sync-portfolio.test.mjs`) |
+| `npm run sync` | Copies the portfolio's pinned project into `lib/featured.json` (needs the network) |
 | `npm run check` | All of the above, in CI order |
 | `npm run images` | Regenerates `app/apple-icon.png`, `app/favicon.ico` and `app/opengraph-image.png` |
 

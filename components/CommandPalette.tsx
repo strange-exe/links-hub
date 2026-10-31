@@ -17,7 +17,7 @@ const COMMANDS: Command[] = [
   { id: "resume", label: "Open resume", detail: "page", href: "/resume/" },
   { id: "email", label: "Email Abhinesh", detail: profile.email, href: `mailto:${profile.email}` },
   { id: "copy", label: "Copy email address", detail: "action", run: () => runTool("copy-email") },
-  { id: "demo", label: `${featured.title}: live demo`, detail: "project", href: featured.live },
+  ...(featured.live ? [{ id: "demo", label: `${featured.title}: live demo`, detail: "project", href: featured.live }] : []),
   { id: "source", label: `${featured.title}: source`, detail: "project", href: featured.source },
   ...groups.flatMap((g) => g.links.map((l) => ({ id: l.key, label: l.label, detail: l.handle, href: l.href }))),
   { id: "qr", label: "Show QR code", detail: "action", run: () => runTool("qr") },
@@ -32,7 +32,8 @@ const COMMANDS: Command[] = [
   },
 ];
 
-const TYPED = ["open resume", "email abhinesh", "view revlens-ai", "open github"];
+// The project phrase follows the featured project (its repo name, e.g. "view execflow").
+const TYPED = ["open resume", "email abhinesh", `view ${featured.source.split("/").pop()?.toLowerCase()}`, "open github"];
 
 /**
  * The command bar in the identity sheet and the command menu it opens (also Ctrl/Cmd+K).

@@ -82,9 +82,11 @@ export default function Page() {
                 ))}
               </ul>
               <div className="feat-links">
-                <a href={featured.live}>
-                  Live demo <ArrowUpRightIcon size={14} weight="bold" aria-hidden="true" />
-                </a>
+                {featured.live && (
+                  <a href={featured.live}>
+                    Live demo <ArrowUpRightIcon size={14} weight="bold" aria-hidden="true" />
+                  </a>
+                )}
                 <a href={featured.source}>
                   Source <ArrowUpRightIcon size={14} weight="bold" aria-hidden="true" />
                 </a>

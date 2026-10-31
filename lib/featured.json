@@ -1,0 +1,9 @@
+{
+  "title": "ExecFlow",
+  "summary": "ExecFlow is a code editor in the browser for students. It runs Python (Pyodide) and C/C++ (LLVM in WebAssembly) on your own device.",
+  "stack": [
+    "TypeScript"
+  ],
+  "live": "https://execflow.abhinesh.codes/about",
+  "source": "https://github.com/strange-exe/ExecFlow"
+}

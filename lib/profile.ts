@@ -1,4 +1,5 @@
 // Single source of truth for the page content. Edit this file to change links.
+import featuredJson from "./featured.json";
 
 export type IconName = "github" | "linkedin" | "globe" | "instagram" | "discord" | "code";
 
@@ -26,7 +27,8 @@ export const profile = {
 };
 
 /** The scrolling strip under the page. Every item comes from abhinesh.codes (About: focus and primary stack;
- *  Revlens AI's stack), so the strip never claims a skill the portfolio doesn't. */
+ *  Revlens AI's stack), so the strip never claims a skill the portfolio doesn't. It doesn't follow the featured
+ *  project, which can change without this file. */
 export const skills = [
   "Python",
   "JavaScript",
@@ -38,12 +40,16 @@ export const skills = [
   "Full-stack web apps",
 ];
 
-export const featured = {
-  title: "Revlens AI",
-  summary: "Review intelligence for homestay owners: sentiment, themes and analytics dashboards.",
-  stack: ["Python", "FastAPI", "PostgreSQL"],
-  live: "https://revlens.abhinesh.codes/",
-  source: "https://github.com/strange-exe/revlens-ai",
+/** The portfolio's first pinned project, copied from abhinesh.codes/projects.json by scripts/sync-portfolio.mjs
+ *  (run on a schedule by .github/workflows/sync-portfolio.yml). Pick it at abhinesh.codes/pick/, not here. */
+export const featured: Featured = featuredJson;
+
+export type Featured = {
+  title: string;
+  summary: string;
+  stack: string[];
+  live: string | null; // projects without a demo have no live link
+  source: string;
 };
 
 export const groups: LinkGroup[] = [
