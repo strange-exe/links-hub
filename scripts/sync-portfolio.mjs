@@ -3,6 +3,8 @@
 // and the first pinned project there is the one this page features. The file is committed, so `npm run build`
 // never needs the network; .github/workflows/sync-portfolio.yml runs this on a schedule and commits changes.
 // Usage: node scripts/sync-portfolio.mjs [--check]   (--check: exit 1 if the file is out of date, write nothing)
+//        EXPECT_SHA256=<hex> node scripts/sync-portfolio.mjs   (wait until the live projects.json has this hash)
+import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
@@ -50,11 +52,30 @@ export function toFeatured(projects) {
   return featured;
 }
 
+/**
+ * Reads projects.json. With `expect` (the sha256 of the file the portfolio just committed, sent by its build),
+ * retries until the live file has that hash: GitHub Pages deploys a minute or two after the push and its CDN
+ * caches for 10 minutes, so an early read would copy the old project. The hash in the query string gives
+ * each version its own cache entry.
+ */
+export async function fetchProjects({ expect, tries = 24, delayMs = 30_000, fetchImpl = fetch, sleep = (ms) => new Promise((r) => setTimeout(r, ms)) } = {}) {
+  if (expect !== undefined && !/^[0-9a-f]{64}$/.test(expect)) throw new Error("expected hash is not a sha256 hex string");
+  const url = expect ? `${SOURCE}?v=${expect}` : SOURCE;
+  for (let attempt = 1; ; attempt++) {
+    const res = await fetchImpl(url, { signal: AbortSignal.timeout(15_000), cache: "no-store" });
+    if (!res.ok) throw new Error(`${SOURCE}: HTTP ${res.status}`);
+    const bytes = Buffer.from(await res.arrayBuffer());
+    if (!expect || createHash("sha256").update(bytes).digest("hex") === expect) return JSON.parse(bytes.toString("utf8"));
+    if (attempt >= tries) throw new Error(`projects.json ${expect.slice(0, 12)} still not deployed after ${tries} tries`);
+    console.log(`projects.json not deployed yet (try ${attempt}/${tries}); waiting`);
+    await sleep(delayMs);
+  }
+}
+
 async function main() {
   const check = process.argv.includes("--check");
-  const res = await fetch(SOURCE, { signal: AbortSignal.timeout(15_000), cache: "no-store" });
-  if (!res.ok) throw new Error(`${SOURCE}: HTTP ${res.status}`);
-  const next = JSON.stringify(toFeatured(await res.json()), null, 2) + "\n";
+  const projects = await fetchProjects({ expect: process.env.EXPECT_SHA256 || undefined });
+  const next = JSON.stringify(toFeatured(projects), null, 2) + "\n";
   const current = await readFile(OUT, "utf8").catch(() => "");
   if (next === current) {
     console.log("lib/featured.json is up to date");

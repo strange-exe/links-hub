@@ -5,7 +5,12 @@
 # exception): https://docs.github.com/en/actions/concepts/security/github_token
 name: Sync portfolio
 
+# The portfolio's build sends `portfolio-updated` right after it commits a new projects.json, with that file's
+# sha256; the sync then waits for Pages to serve it. The schedule is the fallback: GitHub drops many scheduled
+# runs (in practice every ~7 h, not hourly). https://docs.github.com/en/rest/repos/repos#create-a-repository-dispatch-event
 on:
+  repository_dispatch:
+    types: [portfolio-updated]
   schedule:
     - cron: "17 * * * *" # hourly; off the hour, when GitHub's scheduler is busiest
   workflow_dispatch:
@@ -21,7 +26,7 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25 # up to 12 min waiting for Pages, then install + build
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -29,8 +34,11 @@ jobs:
           node-version: lts/*
           cache: npm
 
+      # Payload goes in through env, never ${{ }} inside the script; the script accepts only a 64-char hex hash.
       - name: Copy the featured project
         id: sync
+        env:
+          EXPECT_SHA256: ${{ github.event.client_payload.projects_sha256 }}
         run: |
           node scripts/sync-portfolio.mjs
           if git diff --quiet -- lib/featured.json; then echo "changed=false" >> "$GITHUB_OUTPUT"; else echo "changed=true" >> "$GITHUB_OUTPUT"; fi
